@@ -73,7 +73,7 @@
         .process-card h4 { font-weight: 700; margin-bottom: 0.5rem; }
         .process-card p { color: #395c7c; font-size: 0.95rem; }
 
-        .dashboard-peek { background: #0e2237; border-radius: 40px; padding: 2rem; color: white; margin: 4rem 0; }
+        .dashboard-peek { background: #f8fbff; border-radius: 40px; padding: 2rem; color: white; margin: 4rem 0; }
         .footer { background: #0f172a; color: white; padding: 3rem 0; margin-top: 4rem; }
 
         /* Logo */
@@ -117,6 +117,20 @@
             background: #d1ddee;
             display: block;
         }
+
+        .hero-image-placeholder {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.hero-image-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
     </style>
 </head>
 <body>
@@ -202,7 +216,7 @@
                 </div>
                 <div class="process-card">
                     <div class="process-icon">
-                        <img src="/assets/vaccinate.jpg" alt="Vaccination registry" style="width:100%; height:100%; object-fit:cover; border-radius:30px;">
+                        <img src="/assets/Cattle-vaccination-c-AdobeStock_289582852-web-1024x577.jpg" alt="Vaccination registry" style="width:100%; height:100%; object-fit:cover; border-radius:30px;">
                     </div>
                     <h4>2. Vaccination registry</h4>
                     <p>Vaccine batch, vet ID, booster schedule — all linked to QR.</p>
@@ -235,27 +249,12 @@
         </div>
 
         <!-- dashboard peek (with optional image) -->
-        <div class="container">
-            <div class="dashboard-peek">
-                <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
-                    <img src="/assets/images/dashboard-preview.jpg" alt="Dashboard preview" style="width:120px; height:80px; border-radius:20px; object-fit:cover;">
-                    <h3 style="font-size: 2rem; font-weight: 600;"><i class="fas fa-chart-line"></i> National intelligence: FMD‑negative zones</h3>
-                </div>
-                <div style="display: flex; gap: 2rem; flex-wrap: wrap; margin-top: 1.5rem;">
-                    <div style="background: #1b334b; border-radius: 30px; padding: 1.5rem; flex: 1;">
-                        <span style="opacity:0.7;">vaccinated / tagged</span>
-                        <div style="font-size: 3rem; font-weight:700;">1.2M <span style="font-size: 1rem;">head</span></div>
-                        <div style="display:flex; gap:1rem; margin-top:1rem;"><i class="fas fa-qrcode"></i> 847k active scans</div>
-                    </div>
-                    <div style="background: #1b334b; border-radius: 30px; padding: 1.5rem; flex: 1;">
-                        <span style="opacity:0.7;">FMD negative</span>
-                        <div style="font-size: 3rem; font-weight:700;">100% <span style="font-size: 1rem;">pilot area</span></div>
-                        <div style="display:flex; gap:1rem; margin-top:1rem;"><i class="fas fa-shield"></i> 0 active outbreaks</div>
-                    </div>
-                </div>
-                <p style="margin-top:2rem; color:#9db7d4;"><i class="fas fa-map-pin"></i> Quarantine only affected farms, not provinces — thanks to QR traceability</p>
-            </div>
-        </div>
+        <!-- dashboard image -->
+<div class="container">
+    <div class="dashboard-peek">
+        <img src="/assets/IMG_20260309_130845.jpg" alt="FMD Dashboard Preview" class="dashboard-image">
+    </div>
+</div>
 
         <!-- roadmap & contact unchanged (keep original) -->
         <div class="container" style="text-align:center; margin: 4rem auto;">
