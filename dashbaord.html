@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FMD Surveillance Dashboard · Live Map View</title>
+    <!-- Fonts, Icons, AOS, Leaflet -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f4f7fc; color: #0b1a2a; line-height: 1.5; }
+        :root { --primary: #bc1c2e; --primary-dark: #9f1626; --success: #117f3a; --warning: #b85e00; --info: #2563eb; --neutral-900: #0f172a; --neutral-800: #1e293b; --gray-200: #e9edf2; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
+
+        /* header (same as index) */
+        .header { position: fixed; width: 100%; top: 0; background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .navbar { display: flex; justify-content: space-between; align-items: center; height: 80px; }
+        .logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+        .logo-img { height: 70px; width: auto; border-radius: 8px; }
+        .logo-text { font-size: 1.6rem; font-weight: 700; color: #0f172a; }
+        .logo-text .text-red { color: var(--primary); }
+        .nav-menu { display: flex; gap: 2rem; list-style: none; }
+        .nav-link { text-decoration: none; color: var(--neutral-800); font-weight: 500; }
+        .btn { padding: 0.5rem 1.2rem; border-radius: 40px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.6rem; transition: 0.2s; }
+        .btn-primary { background: var(--primary); color: white; border: 1px solid var(--primary); }
+        .btn-outline { border: 1px solid var(--primary); color: var(--primary); background: transparent; }
+
+        /* dashboard layout */
+        .dashboard { padding: 130px 0 60px; }
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 2rem; }
+        .title-section h1 { font-size: 2.2rem; font-weight: 700; }
+        .title-section .badge { background: rgba(188,28,46,0.1); color: var(--primary-dark); padding: 0.3rem 1rem; border-radius: 60px; font-size: 0.9rem; font-weight: 600; display: inline-block; margin-bottom: 0.5rem; }
+        .date-badge { background: white; padding: 0.5rem 1.5rem; border-radius: 40px; font-weight: 500; box-shadow: 0 2px 8px rgba(0,0,0,0.02); border: 1px solid #dee7f0; }
+        .date-badge i { color: var(--primary); margin-right: 0.5rem; }
+
+        /* map card */
+        .map-card { background: white; border-radius: 40px; padding: 1.8rem; box-shadow: 0 20px 40px -20px rgba(0,40,80,0.2); border: 1px solid rgba(0,0,0,0.03); margin-bottom: 2.5rem; }
+        .map-container { height: 500px; border-radius: 32px; overflow: hidden; border: 1px solid #e2ebf6; position: relative; z-index: 1; }
+        #fmdMap { width: 100%; height: 100%; background: #0b1f33; }
+        .map-legend { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.95); backdrop-filter: blur(4px); border-radius: 60px; padding: 0.6rem 1.2rem; box-shadow: 0 8px 20px rgba(0,0,0,0.1); z-index: 10; display: flex; gap: 1.2rem; flex-wrap: wrap; border: 1px solid white; }
+        .legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; font-weight: 600; }
+        .dot { width: 14px; height: 14px; border-radius: 50%; display: inline-block; }
+        .dot.positive { background: #bc1c2e; box-shadow: 0 0 0 2px rgba(188,28,46,0.3); }
+        .dot.negative { background: #117f3a; }
+        .dot.suspect { background: #b85e00; }
+
+        /* stats row */
+        .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.5rem; margin-bottom: 2.5rem; }
+        .stat-card { background: white; border-radius: 28px; padding: 1.8rem; border: 1px solid #deecf5; box-shadow: 0 6px 14px rgba(0,0,0,0.02); }
+        .stat-title { color: #556b82; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 0.5rem; }
+        .stat-number { font-size: 2.5rem; font-weight: 800; color: #0f172a; line-height: 1; }
+        .stat-detail { margin-top: 0.5rem; font-size: 0.9rem; color: #2e4960; }
+        .stat-detail i { margin-right: 0.3rem; }
+        .stat-card.positive .stat-number { color: var(--primary); }
+        .stat-card.negative .stat-number { color: var(--success); }
+
+        /* farm list / recent alerts */
+        .split-panel { display: grid; grid-template-columns: 1.4fr 1fr; gap: 2rem; margin-top: 1rem; }
+        .farm-table { background: white; border-radius: 36px; padding: 1.8rem; border: 1px solid #e2ebf6; }
+        .farm-table h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem; }
+        .farm-row { display: flex; align-items: center; justify-content: space-between; padding: 0.8rem 0; border-bottom: 1px solid #edf2f7; }
+        .farm-row:last-child { border-bottom: none; }
+        .farm-info { display: flex; align-items: center; gap: 1rem; }
+        .farm-status { width: 12px; height: 12px; border-radius: 50%; }
+        .farm-status.positive { background: var(--primary); }
+        .farm-status.negative { background: var(--success); }
+        .farm-status.suspect { background: var(--warning); }
+        .farm-name { font-weight: 600; }
+        .farm-loc { font-size: 0.8rem; color: #64748b; }
+        .farm-tag { background: #f1f6fb; padding: 0.2rem 0.8rem; border-radius: 40px; font-size: 0.7rem; font-weight: 700; color: #0f172a; }
+        .risk-badge { background: #ffe9e9; color: var(--primary); padding: 0.2rem 1rem; border-radius: 60px; font-size: 0.7rem; font-weight: 700; }
+
+        .alert-card { background: white; border-radius: 36px; padding: 1.8rem; border: 1px solid #e2ebf6; }
+        .alert-card h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem; }
+        .alert-item { background: #fafdff; border-radius: 20px; padding: 1rem; margin-bottom: 1rem; border-left: 5px solid; }
+        .alert-item.positive { border-left-color: var(--primary); }
+        .alert-item.suspect { border-left-color: var(--warning); }
+        .alert-time { font-size: 0.75rem; color: #64748b; margin-bottom: 0.2rem; }
+        .alert-desc { font-weight: 600; }
+
+        .footer { background: #0f172a; color: white; padding: 3rem 0; margin-top: 4rem; }
+
+        /* small responsiveness */
+        @media (max-width: 900px) { .stats-grid { grid-template-columns: 1fr 1fr; } .split-panel { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">
+                    <img src="/assets/livestockpulseA.png" alt="LivestockShield" class="logo-img">
+                    <span class="logo-text">Livestock<span class="text-red">pulseSA</span></span>
+                </a>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="#" class="nav-link">Dashboard</a></li>
+                    <li><a href="#" class="nav-link">Reports</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="#" class="btn btn-outline"><i class="fas fa-qrcode"></i> Scan</a>
+                    <a href="#" class="btn btn-primary">Partner</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="dashboard">
+        <div class="container">
+            <!-- dashboard header -->
+            <div class="dashboard-header">
+                <div class="title-section">
+                    <span class="badge"><i class="fas fa-map-marked-alt"></i> live FMD surveillance · demo</span>
+                    <h1>National biosecurity dashboard</h1>
+                </div>
+                <div class="date-badge"><i class="far fa-clock"></i> last updated: 09 Mar 2026 · 14:32 SAST</div>
+            </div>
+
+            <!-- main map card -->
+            <div class="map-card" data-aos="fade-up">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap;">
+                    <h2 style="font-size: 1.6rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-map" style="color: var(--primary);"></i> FMD risk map — pinpoint status</h2>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <span class="btn btn-outline" style="padding:0.3rem 1rem"><i class="fas fa-filter"></i> all provinces</span>
+                    </div>
+                </div>
+                <div class="map-container">
+                    <div id="fmdMap"></div>
+                    <!-- map legend overlay -->
+                    <div class="map-legend">
+                        <span class="legend-item"><span class="dot positive"></span> FMD positive</span>
+                        <span class="legend-item"><span class="dot negative"></span> FMD negative</span>
+                        <span class="legend-item"><span class="dot suspect"></span> suspect / monitoring</span>
+                    </div>
+                </div>
+                <p style="text-align: right; font-size: 0.8rem; color: #64748b; margin-top: 1rem;"><i class="fas fa-circle-nodes"></i> 78 farms with active QR tags · each dot represents a geo‑tagged farm</p>
+            </div>
+
+            <!-- kpi cards -->
+            <div class="stats-grid" data-aos="fade-up" data-aos-delay="100">
+                <div class="stat-card positive">
+                    <div class="stat-title">FMD positive farms</div>
+                    <div class="stat-number">18</div>
+                    <div class="stat-detail"><i class="fas fa-location-dot"></i> 3 provinces · 847 head</div>
+                </div>
+                <div class="stat-card negative">
+                    <div class="stat-title">FMD negative (certified)</div>
+                    <div class="stat-number">1,247</div>
+                    <div class="stat-detail"><i class="fas fa-qrcode"></i> 847k animals tagged</div>
+                </div>
+                <div class="stat-card suspect">
+                    <div class="stat-title">under observation</div>
+                    <div class="stat-number">14</div>
+                    <div class="stat-detail"><i class="fas fa-clock"></i> 6 farms with alerts</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">vaccination coverage</div>
+                    <div class="stat-number">78%</div>
+                    <div class="stat-detail"><i class="fas fa-syringe"></i> booster compliance 92%</div>
+                </div>
+            </div>
+
+            <!-- split panel: farm list + recent alerts -->
+            <div class="split-panel" data-aos="fade-up" data-aos-delay="150">
+                <!-- left: table of farms -->
+                <div class="farm-table">
+                    <h3><i class="fas fa-list" style="color: var(--primary);"></i> farms by status (QR-tagged)</h3>
+                    <div class="farm-row">
+                        <div class="farm-info"><span class="farm-status positive"></span><div><span class="farm-name">Middelburg Feedlot</span><div class="farm-loc">Mpumalanga · 847 head</div></div></div>
+                        <div><span class="farm-tag">FMD+</span><span class="risk-badge" style="margin-left:0.5rem;">high risk</span></div>
+                    </div>
+                    <div class="farm-row">
+                        <div class="farm-info"><span class="farm-status negative"></span><div><span class="farm-name">Vryburg Beef</span><div class="farm-loc">North West · 2,103 head</div></div></div>
+                        <div><span class="farm-tag">FMD-</span> <i class="fas fa-check-circle" style="color:var(--success);"></i></div>
+                    </div>
+                    <div class="farm-row">
+                        <div class="farm-info"><span class="farm-status negative"></span><div><span class="farm-name">Stellenbosch Winelands</span><div class="farm-loc">Western Cape · 567 head</div></div></div>
+                        <div><span class="farm-tag">FMD-</span> <i class="fas fa-check-circle" style="color:var(--success);"></i></div>
+                    </div>
+                    <div class="farm-row">
+                        <div class="farm-info"><span class="farm-status positive"></span><div><span class="farm-name">Polokwane Export</span><div class="farm-loc">Limpopo · 1,432 head</div></div></div>
+                        <div><span class="farm-tag">FMD+</span> <span class="risk-badge">quarantine</span></div>
+                    </div>
+                    <div class="farm-row">
+                        <div class="farm-info"><span class="farm-status suspect"></span><div><span class="farm-name">Bethlehem Agri</span><div class="farm-loc">Free State · 892 head</div></div></div>
+                        <div><span class="farm-tag">suspect</span> <i class="fas fa-clock" style="color:var(--warning);"></i></div>
+                    </div>
+                    <div class="farm-row">
+                        <div class="farm-info"><span class="farm-status negative"></span><div><span class="farm-name">Kimberley Livestock</span><div class="farm-loc">Northern Cape · 345 head</div></div></div>
+                        <div><span class="farm-tag">FMD-</span></div>
+                    </div>
+                    <div style="margin-top: 1rem; text-align: center;"><a href="#" class="btn btn-outline" style="border-color: #ccdae8;">view all 78 farms</a></div>
+                </div>
+                <!-- right: recent alerts & movements -->
+                <div class="alert-card">
+                    <h3><i class="fas fa-bell" style="color: var(--primary);"></i> recent alerts / scans</h3>
+                    <div class="alert-item positive">
+                        <div class="alert-time"><i class="far fa-clock"></i> 15 min ago</div>
+                        <div class="alert-desc">🔴 FMD positive detected · Middelburg</div>
+                        <div style="font-size:0.75rem; margin-top:0.2rem;">QR scan ZA172 · vet notified</div>
+                    </div>
+                    <div class="alert-item suspect">
+                        <div class="alert-time"><i class="far fa-clock"></i> 42 min ago</div>
+                        <div class="alert-desc">🟠 suspect symptoms: Bethlehem Agri (3 animals)</div>
+                        <div style="font-size:0.75rem;">booster overdue · sample taken</div>
+                    </div>
+                    <div class="alert-item" style="border-left-color: #2563eb;">
+                        <div class="alert-time"><i class="far fa-clock"></i> 2h ago</div>
+                        <div class="alert-desc">🔵 movement permit scanned · Vryburg → abattoir</div>
+                        <div style="font-size:0.75rem;">FMD‑negative verified · QR ZA831</div>
+                    </div>
+                    <div class="alert-item" style="border-left-color: #117f3a;">
+                        <div class="alert-time"><i class="far fa-clock"></i> 5h ago</div>
+                        <div class="alert-desc">✅ 1,247 daily health reports received</div>
+                        <div style="font-size:0.75rem;">98% negative, 2% pending review</div>
+                    </div>
+                    <div style="margin-top: 1.2rem; background: #f1f6fb; border-radius: 60px; padding: 0.8rem 1.2rem;">
+                        <i class="fas fa-qrcode" style="color:var(--primary);"></i> last QR scan: 2 min ago (farm Bethlehem)
+                    </div>
+                </div>
+            </div>
+
+            <!-- footnote about demo data -->
+            <div style="background: white; border-radius: 30px; padding: 1.2rem 2rem; margin-top: 2rem; border: 1px solid #deecf5; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                <i class="fas fa-info-circle" style="color: var(--primary); font-size: 1.6rem;"></i>
+                <span><strong>Demo dashboard</strong> · simulated FMD surveillance based on QR‑tagged farms. Each point on map represents a real geo‑coordinate with status (red = FMD positive, green = negative, orange = suspect).</span>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                <span>National Digital Livestock Vaccination & Health Monitoring System</span>
+                <span style="color:#bc1c2e;">⬩ QR per animal ⬩ FMD negative proof</span>
+                <span> Tshepang Masilo · <a href="mailto:tshepang.technicorns@outlook.com" style="color:white;">tshepang.technicorns@outlook.com</a></span>
+            </div>
+            <hr style="border-color:#2d3f55; margin: 2rem 0;">
+            <div style="display: flex; gap: 2rem; font-size:0.9rem;">
+                <span>© Tech Unicorns · demo version</span>
+                <span>POPIA compliant</span>
+                <span>DALRRD ready</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        AOS.init({ duration: 700, once: true });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const map = L.map('fmdMap').setView([-28.4793, 24.6986], 6);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(map);
+
+            // Sample farm data (SA coordinates) with status
+            const farms = [
+                { name: 'Middelburg Feedlot', lat: -25.7689, lng: 29.4648, status: 'positive', head: 847 },
+                { name: 'Vryburg Beef', lat: -26.9569, lng: 24.7284, status: 'negative', head: 2103 },
+                { name: 'Bethlehem Agri', lat: -28.2308, lng: 28.3073, status: 'suspect', head: 892 },
+                { name: 'Polokwane Export', lat: -23.9045, lng: 29.4688, status: 'positive', head: 1432 },
+                { name: 'Stellenbosch Farm', lat: -33.9321, lng: 18.8602, status: 'negative', head: 567 },
+                { name: 'Kimberley Livestock', lat: -28.7419, lng: 24.7719, status: 'negative', head: 345 },
+                { name: 'Queenstown Merino', lat: -31.8976, lng: 26.8753, status: 'positive', head: 612 },
+                { name: 'Nelspruit Export', lat: -25.4745, lng: 30.9703, status: 'negative', head: 1789 },
+                { name: 'Upington Ranch', lat: -28.4478, lng: 21.2561, status: 'negative', head: 934 },
+                { name: 'Kroonstad Feedlot', lat: -27.6446, lng: 27.2349, status: 'suspect', head: 421 },
+                { name: 'Mpumalanga Dairy', lat: -25.4658, lng: 30.9853, status: 'negative', head: 1560 },
+                { name: 'East London Abattoir', lat: -32.9833, lng: 27.8667, status: 'negative', head: 0 }, // transport hub
+                { name: 'Rustenburg Farm', lat: -25.6545, lng: 27.2423, status: 'positive', head: 238 },
+                { name: 'Limpopo Border', lat: -22.4211, lng: 29.9864, status: 'suspect', head: 77 }
+            ];
+
+            // function to get marker color and icon
+            function getMarkerIcon(status) {
+                let color, iconClass;
+                if (status === 'positive') { color = '#bc1c2e'; iconClass = 'fa-exclamation-triangle'; }
+                else if (status === 'suspect') { color = '#b85e00'; iconClass = 'fa-clock'; }
+                else { color = '#117f3a'; iconClass = 'fa-check'; }
+
+                return L.divIcon({
+                    className: 'custom-marker',
+                    html: `<div style="background:${color}; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:3px solid white; box-shadow:0 4px 10px rgba(0,0,0,0.3);"><i class="fas ${iconClass}" style="color:white; font-size:12px;"></i></div>`,
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 15],
+                    popupAnchor: [0, -15]
+                });
+            }
+
+            farms.forEach(f => {
+                const marker = L.marker([f.lat, f.lng], { icon: getMarkerIcon(f.status) }).addTo(map);
+                marker.bindPopup(`
+                    <div style="font-weight:700; margin-bottom:4px;">${f.name}</div>
+                    <div style="font-size:0.8rem; margin-bottom:6px;"><i class="fas fa-map-marker-alt" style="color:#bc1c2e;"></i> ${f.lat.toFixed(4)}, ${f.lng.toFixed(4)}</div>
+                    <div style="display:flex; justify-content:space-between; background:#f2f6fc; padding:6px; border-radius:16px;">
+                        <span><i class="fas fa-cow"></i> ${f.head} head</span>
+                        <span style="background:${f.status==='positive'?'#bc1c2e':f.status==='suspect'?'#b85e00':'#117f3a'}; color:white; padding:2px 10px; border-radius:40px; text-transform:uppercase; font-size:0.7rem;">${f.status}</span>
+                    </div>
+                    <div style="margin-top:6px;"><i class="fas fa-qrcode"></i> QR tagged · last scan 2h ago</div>
+                `, { maxWidth: 220 });
+            });
+
+            // Add some heatmap / highlight for positive clusters (optional)
+            var positiveGroup = L.featureGroup(farms.filter(f => f.status === 'positive').map(f => L.marker([f.lat, f.lng])));
+            map.fitBounds(positiveGroup.getBounds().pad(0.2));
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FMD QR Process · Livestock vaccination workflow</title>
+    <!-- Fonts, Icons, AOS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f4f8fd; color: #0b1a2a; line-height: 1.5; }
+        :root { --primary: #bc1c2e; --primary-dark: #9f1626; --success: #117f3a; --warning: #b85e00; --info: #2563eb; --neutral-900: #0f172a; --neutral-800: #1e293b; --gray-200: #e9edf2; }
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 2rem; }
+
+        /* header (same as index/dashboard) */
+        .header { position: fixed; width: 100%; top: 0; background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .navbar { display: flex; justify-content: space-between; align-items: center; height: 80px; }
+        .logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+        .logo-img { height: 70px; width: auto; border-radius: 8px; }
+        .logo-text { font-size: 1.6rem; font-weight: 700; color: #0f172a; }
+        .logo-text .text-red { color: var(--primary); }
+        .nav-menu { display: flex; gap: 2rem; list-style: none; }
+        .nav-link { text-decoration: none; color: var(--neutral-800); font-weight: 500; }
+        .btn { padding: 0.5rem 1.2rem; border-radius: 40px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.6rem; transition: 0.2s; }
+        .btn-primary { background: var(--primary); color: white; border: 1px solid var(--primary); }
+        .btn-outline { border: 1px solid var(--primary); color: var(--primary); background: transparent; }
+
+        /* page header */
+        .process-header { padding: 130px 0 40px; text-align: center; background: linear-gradient(165deg, #ffffff 0%, #f0f5fa 100%); }
+        .process-header h1 { font-size: 3rem; font-weight: 800; margin-bottom: 1rem; }
+        .process-header .lead { font-size: 1.2rem; color: #2d3c4b; max-width: 700px; margin: 0 auto; }
+
+        /* timeline style */
+        .process-timeline { padding: 4rem 0; }
+        .timeline-grid { display: flex; flex-direction: column; gap: 2.5rem; max-width: 900px; margin: 0 auto; }
+        .timeline-item { display: flex; gap: 2rem; background: white; border-radius: 60px; padding: 2rem; box-shadow: 0 20px 30px -20px rgba(0,0,0,0.1); border: 1px solid #deecf5; }
+        .timeline-number { width: 70px; height: 70px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; flex-shrink: 0; }
+        .timeline-content { flex: 1; }
+        .timeline-content h3 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+        .badge { background: rgba(188,28,46,0.1); color: var(--primary-dark); padding: 0.2rem 1rem; border-radius: 60px; font-size: 0.8rem; font-weight: 600; }
+        .timeline-content p { color: #2e4960; margin: 0.8rem 0 1rem; font-size: 1.1rem; }
+        .feature-list { display: flex; flex-wrap: wrap; gap: 1rem; margin: 1.2rem 0; }
+        .feature-list span { background: #f1f6fb; padding: 0.3rem 1rem; border-radius: 40px; font-size: 0.9rem; font-weight: 500; }
+        .feature-list i { color: var(--success); margin-right: 0.3rem; }
+
+        /* image placeholder row */
+        .step-visual { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+        .visual-thumb { width: 80px; height: 80px; background: #dbe5f0; border-radius: 20px; display: flex; align-items: center; justify-content: center; color: #64748b; font-size: 0.7rem; text-align: center; border: 1px solid #cbdae9; }
+
+        /* sub process cards */
+        .sub-process-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.8rem; margin: 4rem 0; }
+        .sub-card { background: white; border-radius: 32px; padding: 2rem 1.5rem; border: 1px solid #e2ebf6; box-shadow: 0 12px 24px -16px rgba(0,0,0,0.1); }
+        .sub-icon { width: 70px; height: 70px; background: #f1f6fb; border-radius: 30px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--primary); margin-bottom: 1.5rem; overflow: hidden; }
+        .sub-card h4 { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .sub-card p { color: #395c7c; }
+
+        /* how it works banner */
+        .how-it-works { background: #0e2237; border-radius: 60px; padding: 3rem; color: white; margin: 4rem 0; }
+        .how-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2rem; text-align: center; }
+        .how-item i { font-size: 2.5rem; color: var(--primary); background: #1b334b; padding: 1rem; border-radius: 50%; margin-bottom: 1rem; }
+        .how-item h4 { font-size: 1.3rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .how-item p { color: #9db7d4; }
+
+        .footer { background: #0f172a; color: white; padding: 3rem 0; margin-top: 4rem; }
+        @media (max-width:700px) { .timeline-item { flex-direction: column; align-items: flex-start; } .how-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">
+                    <img src="/assets/livestockpulseA.png" alt="LivestockShield" class="logo-img">
+                    <span class="logo-text">Livestock<span class="text-red">pulseSA</span></span>
+                </a>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+                    <li><a href="process.html" class="nav-link">Process</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="#" class="btn btn-outline"><i class="fas fa-qrcode"></i> Scan demo</a>
+                    <a href="#" class="btn btn-primary">Partner</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- page title -->
+        <section class="process-header">
+            <div class="container">
+                <span class="badge" style="background: rgba(188,28,46,0.08); padding:0.4rem 1.2rem;">end‑to‑end workflow</span>
+                <h1>From vaccination to verified FMD‑negative</h1>
+                <p class="lead">Every animal gets a unique QR‑coded ear tag, creating a digital health record that follows it from farm to export.</p>
+            </div>
+        </section>
+
+        <!-- main timeline (big steps) -->
+        <section class="process-timeline">
+            <div class="container">
+                <div class="timeline-grid">
+                    <!-- step 1 -->
+                    <div class="timeline-item" data-aos="fade-up">
+                        <div class="timeline-number">1</div>
+                        <div class="timeline-content">
+                            <h3>QR ear tag applied <span class="badge">tamper‑resistant</span></h3>
+                            <p>Each vaccinated animal receives a durable, weatherproof QR ear tag with a unique digital identity. The tag is scanned at the point of application to link it to the animal's profile.</p>
+                            <div class="feature-list">
+                                <span><i class="fas fa-check-circle"></i> Unique ID per animal</span>
+                                <span><i class="fas fa-check-circle"></i> Tamper‑proof</span>
+                                <span><i class="fas fa-check-circle"></i> Weather resistant</span>
+                            </div>
+                            <div class="step-visual">
+                                <div class="visual-thumb"><i class="fas fa-cow"></i><br>tag</div>
+                                <div class="visual-thumb"><i class="fas fa-qrcode"></i><br>QR close</div>
+                                <div class="visual-thumb"><i class="fas fa-syringe"></i><br>vaccination</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- step 2 -->
+                    <div class="timeline-item" data-aos="fade-up" data-aos-delay="100">
+                        <div class="timeline-number">2</div>
+                        <div class="timeline-content">
+                            <h3>Vaccination & health registry</h3>
+                            <p>Vet or technician records vaccine type, batch number, date, and booster due date directly into the system via mobile app. All data is linked to the animal's QR code.</p>
+                            <div class="feature-list">
+                                <span><i class="fas fa-check-circle"></i> Vaccine batch tracking</span>
+                                <span><i class="fas fa-check-circle"></i> Booster reminders</span>
+                                <span><i class="fas fa-check-circle"></i> Vet credentials</span>
+                            </div>
+                            <div class="step-visual">
+                                <div class="visual-thumb"><i class="fas fa-notes-medical"></i><br>registry</div>
+                                <div class="visual-thumb"><i class="fas fa-file-invoice"></i><br>digital profile</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- step 3 -->
+                    <div class="timeline-item" data-aos="fade-up" data-aos-delay="200">
+                        <div class="timeline-number">3</div>
+                        <div class="timeline-content">
+                            <h3>Daily health monitoring <span class="badge">farmer reports</span></h3>
+                            <p>Farmers scan the QR code daily and submit a short health check (eating, mobility, symptoms). Photos can be uploaded for veterinary review.</p>
+                            <div class="feature-list">
+                                <span><i class="fas fa-check-circle"></i> Symptom checker</span>
+                                <span><i class="fas fa-check-circle"></i> Photo upload</span>
+                                <span><i class="fas fa-check-circle"></i> Early alert</span>
+                            </div>
+                            <div class="step-visual">
+                                <div class="visual-thumb"><i class="fas fa-mobile-alt"></i><br>app</div>
+                                <div class="visual-thumb"><i class="fas fa-camera"></i><br>photo</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- step 4 -->
+                    <div class="timeline-item" data-aos="fade-up" data-aos-delay="300">
+                        <div class="timeline-number">4</div>
+                        <div class="timeline-content">
+                            <h3>Movement & traceability</h3>
+                            <p>Every time an animal moves (auction, feedlot, abattoir) the QR code is scanned. The system logs origin, destination, and timestamp. Non‑compliant animals are prevented from moving.</p>
+                            <div class="feature-list">
+                                <span><i class="fas fa-check-circle"></i> Permit enforcement</span>
+                                <span><i class="fas fa-check-circle"></i> GPS location</span>
+                                <span><i class="fas fa-check-circle"></i> Blockchain anchor</span>
+                            </div>
+                            <div class="step-visual">
+                                <div class="visual-thumb"><i class="fas fa-truck"></i><br>transport</div>
+                                <div class="visual-thumb"><i class="fas fa-qrcode"></i><br>scan gate</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- step 5 -->
+                    <div class="timeline-item" data-aos="fade-up" data-aos-delay="400">
+                        <div class="timeline-number">5</div>
+                        <div class="timeline-content">
+                            <h3>National dashboard & alerts</h3>
+                            <p>All data flows into a central command center. Veterinary authorities see real‑time FMD status, vaccination coverage, and outbreak hotspots. Automatic alerts for suspected cases.</p>
+                            <div class="feature-list">
+                                <span><i class="fas fa-check-circle"></i> Real‑time map</span>
+                                <span><i class="fas fa-check-circle"></i> Risk heatmap</span>
+                                <span><i class="fas fa-check-circle"></i> Export reports</span>
+                            </div>
+                            <div class="step-visual">
+                                <div class="visual-thumb"><i class="fas fa-chart-line"></i><br>dashboard</div>
+                                <div class="visual-thumb"><i class="fas fa-bell"></i><br>alerts</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- detailed sub‑process cards (system components) -->
+        <div class="container">
+            <div style="text-align: center; margin: 2rem 0 3rem;">
+                <span class="badge" style="background: rgba(188,28,46,0.08);">system components</span>
+                <h2 style="font-size: 2.2rem; font-weight: 700; margin-top: 0.5rem;">What makes the QR system work</h2>
+            </div>
+            <div class="sub-process-grid">
+                <div class="sub-card">
+                    <div class="sub-icon"><img src="/assets/images/qr-ear-tag.jpg" alt="tag" style="width:100%; height:100%; object-fit:cover; border-radius:30px;"></div>
+                    <h4>QR ear tag</h4>
+                    <p>Unique ID per animal, laser‑etched, withstands mud, rain, and sun. Scannable with any smartphone.</p>
+                </div>
+                <div class="sub-card">
+                    <div class="sub-icon"><img src="/assets/images/vaccination-registry.jpg" alt="vaccination registry" style="width:100%; height:100%; object-fit:cover; border-radius:30px;"></div>
+                    <h4>Vaccination registry</h4>
+                    <p>Secure database storing vaccine batch, date, and next booster. Automatically flags overdue animals.</p>
+                </div>
+                <div class="sub-card">
+                    <div class="sub-icon"><img src="/assets/images/daily-health-check.jpg" alt="health check" style="width:100%; height:100%; object-fit:cover; border-radius:30px;"></div>
+                    <h4>Daily health check</h4>
+                    <p>Farmer scans and answers 5 simple health questions. Machine learning flags unusual patterns.</p>
+                </div>
+                <div class="sub-card">
+                    <div class="sub-icon"><img src="/assets/images/movement-scan.jpg" alt="movement" style="width:100%; height:100%; object-fit:cover; border-radius:30px;"></div>
+                    <h4>Movement control</h4>
+                    <p>Permits are auto‑generated for FMD‑negative animals. Positive or suspect animals are blocked.</p>
+                </div>
+                <div class="sub-card">
+                    <div class="sub-icon"><img src="/assets/images/dashboard-preview.jpg" alt="dashboard" style="width:100%; height:100%; object-fit:cover; border-radius:30px;"></div>
+                    <h4>National dashboard</h4>
+                    <p>Real‑time view of all tagged animals, outbreak zones, and vaccination coverage by district.</p>
+                </div>
+                <div class="sub-card">
+                    <div class="sub-icon"><i class="fas fa-shield-alt" style="font-size:2rem; color:var(--primary);"></i></div>
+                    <h4>Blockchain anchor</h4>
+                    <p>Each scan and event is hashed on Hedera, providing immutable proof for auditors and trade partners.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- how it works summary (three pillars) -->
+        <div class="container">
+            <div class="how-it-works">
+                <h3 style="font-size: 2rem; font-weight: 700; margin-bottom: 2rem; text-align: center;">Three pillars of digital biosecurity</h3>
+                <div class="how-grid">
+                    <div class="how-item">
+                        <i class="fas fa-id-card"></i>
+                        <h4>1. Unique digital identity</h4>
+                        <p>Every animal gets a tamper‑proof QR code that links to a permanent health record.</p>
+                    </div>
+                    <div class="how-item">
+                        <i class="fas fa-syringe"></i>
+                        <h4>2. Verified vaccination</h4>
+                        <p>Vaccine batch, date, and vet are recorded at source – no paper, no fraud.</p>
+                    </div>
+                    <div class="how-item">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <h4>3. Live traceability</h4>
+                        <p>From farm to abattoir, every movement is scanned and geolocated.</p>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 2.5rem;">
+                    <span style="background: #1f3a57; padding: 0.5rem 2rem; border-radius: 60px; color: #bcd3f0;"><i class="fas fa-qrcode"></i> Over 1.2 million animals already QR‑tagged in pilot</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- final benefits / call to action -->
+        <div class="container" style="margin-bottom: 4rem;">
+            <div style="background: white; border-radius: 48px; padding: 3rem; display: flex; flex-wrap: wrap; gap: 2rem; align-items: center; box-shadow: 0 20px 40px -20px #00000030;">
+                <div style="flex: 1; min-width: 250px;">
+                    <h3 style="font-size: 2rem; font-weight: 700;">Ready to implement?</h3>
+                    <p style="font-size: 1.1rem; color:#2e4960;">The QR‑code livestock system is proven, POPIA‑compliant, and ready for national rollout.</p>
+                    <div style="margin-top: 1.5rem;">
+                        <a href="#" class="btn btn-primary btn-large"><i class="fas fa-download"></i> Download process PDF</a>
+                        <a href="dashboard.html" class="btn btn-outline btn-large" style="margin-left: 1rem;">View live map</a>
+                    </div>
+                </div>
+                <div style="flex: 0 0 auto; background: #f1f6fc; border-radius: 36px; padding: 1.5rem 2.5rem;">
+                    <i class="fas fa-qrcode" style="font-size: 3rem; color:var(--primary);"></i>
+                    <div style="font-weight: 800; margin-top: 0.5rem;">Phase 1 pilot</div>
+                    <div>R28M · 120% IRR</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                <span>National Digital Livestock Vaccination & Health Monitoring System</span>
+                <span style="color:#bc1c2e;">⬩ QR per animal ⬩ FMD negative proof</span>
+                <span> Tshepang Masilo · <a href="mailto:tshepang.technicorns@outlook.com" style="color:white;">tshepang.technicorns@outlook.com</a></span>
+            </div>
+            <hr style="border-color:#2d3f55; margin: 2rem 0;">
+            <div style="display: flex; gap: 2rem; font-size:0.9rem;">
+                <span>© Tech Unicorns · all rights reserved</span>
+                <span>POPIA compliant</span>
+                <span>DALRRD ready</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+    </script>
+</body>
+</html>
