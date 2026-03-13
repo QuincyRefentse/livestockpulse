@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Livestock QR Biosecurity Process</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+font-family:'Inter',sans-serif;
+margin:0;
+background:#f6f7fb;
+color:#222;
+}
+
+header{
+background:#0f172a;
+color:white;
+padding:20px;
+text-align:center;
+}
+
+header h1{
+margin:0;
+font-size:28px;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+padding:40px 20px;
+}
+
+.section-title{
+text-align:center;
+margin-bottom:40px;
+}
+
+.section-title h2{
+font-size:32px;
+}
+
+.timeline{
+display:grid;
+gap:25px;
+}
+
+.card{
+background:white;
+padding:25px;
+border-radius:12px;
+box-shadow:0 4px 15px rgba(0,0,0,0.05);
+}
+
+.step{
+font-size:14px;
+font-weight:600;
+color:#3b82f6;
+margin-bottom:10px;
+}
+
+.card h3{
+margin:0 0 10px 0;
+}
+
+.features{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+margin-top:15px;
+}
+
+.badge{
+background:#eef2ff;
+padding:6px 10px;
+border-radius:6px;
+font-size:13px;
+}
+
+.image-placeholder{
+height:150px;
+background:#e5e7eb;
+border-radius:8px;
+display:flex;
+align-items:center;
+justify-content:center;
+color:#666;
+margin-top:15px;
+}
+
+.upload-area{
+margin-top:15px;
+}
+
+.upload-area input{
+padding:10px;
+}
+
+button{
+background:#2563eb;
+border:none;
+color:white;
+padding:10px 15px;
+border-radius:6px;
+cursor:pointer;
+margin-top:10px;
+}
+
+button:hover{
+background:#1e40af;
+}
+
+.dashboard{
+margin-top:60px;
+}
+
+.map{
+height:300px;
+background:#dbeafe;
+border-radius:10px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:600;
+}
+
+footer{
+margin-top:60px;
+background:#0f172a;
+color:white;
+text-align:center;
+padding:20px;
+font-size:14px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>From Vaccination to Verified FMD-Negative</h1>
+<p>Digital Livestock Biosecurity System</p>
+</header>
+
+<div class="container">
+
+<div class="section-title">
+<h2>How the QR Livestock System Works</h2>
+<p>Each animal receives a digital identity tracked from farm to export.</p>
+</div>
+
+<div class="timeline">
+
+<!-- STEP 1 -->
+<div class="card">
+
+<div class="step">STEP 1</div>
+
+<h3>QR Ear Tag Applied</h3>
+
+<p>Every vaccinated animal receives a unique tamper-resistant QR ear tag linked to its digital health record.</p>
+
+<div class="features">
+<span class="badge">Unique ID per animal</span>
+<span class="badge">Weather resistant</span>
+<span class="badge">Tamper proof</span>
+</div>
+
+<div class="image-placeholder">
+QR Ear Tag Example
+</div>
+
+<button onclick="scanQR()">Scan QR Tag Demo</button>
+
+</div>
+
+<!-- STEP 2 -->
+<div class="card">
+
+<div class="step">STEP 2</div>
+
+<h3>Vaccination & Health Registry</h3>
+
+<p>Veterinarians record vaccination type, batch number and booster schedule directly into the digital registry.</p>
+
+<div class="features">
+<span class="badge">Vaccine batch tracking</span>
+<span class="badge">Booster reminders</span>
+<span class="badge">Vet credentials</span>
+</div>
+
+<div class="image-placeholder">
+Vaccination Record Interface
+</div>
+
+</div>
+
+<!-- STEP 3 -->
+<div class="card">
+
+<div class="step">STEP 3</div>
+
+<h3>Daily Health Monitoring</h3>
+
+<p>Farmers scan the QR tag and submit daily health reports with optional photos for veterinary review.</p>
+
+<div class="features">
+<span class="badge">Symptom checker</span>
+<span class="badge">Photo upload</span>
+<span class="badge">Early outbreak alert</span>
+</div>
+
+<div class="upload-area">
+
+<label>Upload cow photo:</label><br>
+<input type="file">
+
+<br>
+
+<label>Health status:</label>
+
+<select>
+<option>Healthy</option>
+<option>Reduced appetite</option>
+<option>Limping</option>
+<option>Possible FMD symptoms</option>
+</select>
+
+<br>
+
+<button onclick="submitReport()">Submit Health Report</button>
+
+</div>
+
+</div>
+
+<!-- STEP 4 -->
+<div class="card">
+
+<div class="step">STEP 4</div>
+
+<h3>Movement & Traceability</h3>
+
+<p>Every movement — auctions, transport, abattoirs — is logged by scanning the QR code.</p>
+
+<div class="features">
+<span class="badge">Permit enforcement</span>
+<span class="badge">GPS location</span>
+<span class="badge">Movement logs</span>
+</div>
+
+<div class="image-placeholder">
+Transport Scan Gate
+</div>
+
+</div>
+
+<!-- STEP 5 -->
+<div class="card">
+
+<div class="step">STEP 5</div>
+
+<h3>National Dashboard & Alerts</h3>
+
+<p>Authorities view real-time vaccination coverage, movement history and outbreak alerts.</p>
+
+<div class="features">
+<span class="badge">Real-time map</span>
+<span class="badge">Risk heatmap</span>
+<span class="badge">Export reports</span>
+</div>
+
+<div class="image-placeholder">
+Government Monitoring Dashboard
+</div>
+
+</div>
+
+</div>
+
+<!-- DASHBOARD PREVIEW -->
+
+<div class="dashboard">
+
+<div class="section-title">
+<h2>National Biosecurity Dashboard</h2>
+<p>Real-time livestock monitoring across provinces.</p>
+</div>
+
+<div class="map">
+FMD Risk Monitoring Map (Prototype)
+</div>
+
+</div>
+
+</div>
+
+<footer>
+
+Tech Unicorns · Livestock Biosecurity Platform Prototype
+
+</footer>
+
+<script>
+
+function scanQR(){
+
+alert("QR Scanner Demo\n\nAnimal ID: SA-BOV-847221\nVaccinated: Yes\nFMD Status: Negative\nLast Health Check: Today")
+
+}
+
+function submitReport(){
+
+alert("Health report submitted successfully.\nVeterinary authority notified.")
+
+}
+
+</script>
+
+</body>
+</html>
