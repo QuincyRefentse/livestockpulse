@@ -73,6 +73,55 @@
         .process-card h4 { font-weight: 700; margin-bottom: 0.5rem; }
         .process-card p { color: #395c7c; font-size: 0.95rem; }
 
+        /* FMD Images Gallery */
+        .fmd-gallery {
+            margin: 4rem 0;
+            background: white;
+            border-radius: 40px;
+            padding: 2rem;
+            box-shadow: 0 20px 30px -10px rgba(0,0,0,0.1);
+        }
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .gallery-item {
+            border-radius: 16px;
+            overflow: hidden;
+            aspect-ratio: 1;
+            border: 2px solid #e9edf2;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        .gallery-item:hover {
+            transform: scale(1.02);
+            border-color: var(--primary);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .gallery-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .gallery-title h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        .gallery-badge {
+            background: var(--primary);
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.9rem;
+        }
+
         .dashboard-peek { background: #f8fbff; border-radius: 40px; padding: 2rem; margin: 4rem 0; }
         .dashboard-image { width: 100%; border-radius: 24px; border: 1px solid #cbdae9; box-shadow: 0 20px 30px -10px rgba(0,0,0,0.15); display: block; }
         .footer { background: #0f172a; color: white; padding: 3rem 0; margin-top: 4rem; }
@@ -212,7 +261,7 @@
                <ul class="nav-menu">
                     <li><a href="index.html" class="nav-link">Vision</a></li>
                     <li><a href="process.html" class="nav-link">Process</a></li>
-                    <li><a href="dashbaord.html" class="nav-link">Dashboard</a></li>
+                    <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
                 </ul>
                 <div class="nav-actions">
                     <!-- SCAN DEMO button triggers camera -->
@@ -266,14 +315,14 @@
                     </div>
                     <div class="hero-visual" data-aos="fade-left">
                         <div class="hero-image-placeholder">
-                            <img src="/assets/IMG-20260309-WA0005.jpg" alt="Hero visual placeholder" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22600%22%20height%3D%22400%22%20viewBox%3D%220%200%20600%20400%22%3E%3Crect%20width%3D%22600%22%20height%3D%22400%22%20fill%3D%22%23bc1c2e22%22%2F%3E%3Ctext%20x%3D%2230%22%20y%3D%22200%22%20font-family%3D%22Inter%22%20font-size%3D%2224%22%20fill%3D%22%239f1626%22%3E📸%20QR%20tag%20scan%20visual%3C%2Ftext%3E%3C%2Fsvg%3E';">
+                            <img src="/assets/fmdimages/1000363625.jpg" alt="FMD vaccinated cattle" onerror="this.src='/assets/IMG-20260309-WA0005.jpg'; this.onerror=null;">
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- process grid ... (unchanged, keep as is) -->
+        <!-- process grid with updated images from fmdimages -->
         <div class="container">
             <div class="section-header">
                 <span class="section-tag">national digital livestock ecosystem</span>
@@ -282,28 +331,28 @@
             <div class="process-grid">
                 <div class="process-card">
                     <div class="process-icon">
-                        <img src="/assets/qrcode.jpg" alt="QR ear tag" style="width:100%; height:100%; object-fit:cover; border-radius:30px;" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2270%22%20height%3D%2270%22%20viewBox%3D%220%200%2070%2070%22%3E%3Crect%20width%3D%2270%22%20height%3D%2270%22%20fill%3D%22%23333%22%2F%3E%3Ctext%20x%3D%2210%22%20y%3D%2245%22%20fill%3D%22%23fff%22%20font-size%3D%2220%22%3E📱%3C%2Ftext%3E%3C%2Fsvg%3E';">
+                        <img src="/assets/fmdimages/1000363929.jpg" alt="QR ear tag" style="width:100%; height:100%; object-fit:cover; border-radius:30px;" onerror="this.src='/assets/qrcode.jpg'; this.onerror=null;">
                     </div>
                     <h4>1. QR ear tag</h4>
                     <p>Unique ID per bovine, weather-resistant, tamper‑proof, scanned via smartphone.</p>
                 </div>
                 <div class="process-card">
                     <div class="process-icon">
-                        <img src="/assets/Cattle-vaccination-c-AdobeStock_289582852-web-1024x577.jpg" alt="Vaccination registry" style="width:100%; height:100%; object-fit:cover; border-radius:30px;" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2270%22%20height%3D%2270%22%20viewBox%3D%220%200%2070%2070%22%3E%3Crect%20width%3D%2270%22%20height%3D%2270%22%20fill%3D%22%23333%22%2F%3E%3Ctext%20x%3D%2210%22%20y%3D%2245%22%20fill%3D%22%23fff%22%20font-size%3D%2220%22%3E💉%3C%2Ftext%3E%3C%2Fsvg%3E';">
+                        <img src="/assets/fmdimages/1000366868.jpg" alt="Vaccination registry" style="width:100%; height:100%; object-fit:cover; border-radius:30px;" onerror="this.src='/assets/Cattle-vaccination-c-AdobeStock_289582852-web-1024x577.jpg'; this.onerror=null;">
                     </div>
                     <h4>2. Vaccination registry</h4>
                     <p>Vaccine batch, vet ID, booster schedule — all linked to QR.</p>
                 </div>
                 <div class="process-card">
                     <div class="process-icon">
-                        <img src="/assets/negative.jpg" alt="Daily health check" style="width:100%; height:100%; object-fit:cover; border-radius:30px;" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2270%22%20height%3D%2270%22%20viewBox%3D%220%200%2070%2070%22%3E%3Crect%20width%3D%2270%22%20height%3D%2270%22%20fill%3D%22%23333%22%2F%3E%3Ctext%20x%3D%2210%22%20y%3D%2245%22%20fill%3D%22%23fff%22%20font-size%3D%2220%22%3E🐄%3C%2Ftext%3E%3C%2Fsvg%3E';">
+                        <img src="/assets/fmdimages/1000357187.jpg" alt="Daily health check" style="width:100%; height:100%; object-fit:cover; border-radius:30px;" onerror="this.src='/assets/negative.jpg'; this.onerror=null;">
                     </div>
                     <h4>3. Daily health check</h4>
                     <p>Farmer scans & submits symptoms (photos, mobility) → early alert.</p>
                 </div>
                 <div class="process-card">
                     <div class="process-icon">
-                        <img src="/assets/negative.jpg" alt="Movement scan" style="width:100%; height:100%; object-fit:cover; border-radius:30px;" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2270%22%20height%3D%2270%22%20viewBox%3D%220%200%2070%2070%22%3E%3Crect%20width%3D%2270%22%20height%3D%2270%22%20fill%3D%22%23333%22%2F%3E%3Ctext%20x%3D%2210%22%20y%3D%2245%22%20fill%3D%22%23fff%22%20font-size%3D%2220%22%3E🚛%3C%2Ftext%3E%3C%2Fsvg%3E';">
+                        <img src="/assets/fmdimages/1000363635.jpg" alt="Movement scan" style="width:100%; height:100%; object-fit:cover; border-radius:30px;" onerror="this.src='/assets/negative.jpg'; this.onerror=null;">
                     </div>
                     <h4>4. Movement scan</h4>
                     <p>Auctions, abattoirs, transport — scan logs location, prevents non‑compliant moves.</p>
@@ -311,23 +360,64 @@
             </div>
         </div>
 
-        <!-- dashboard image -->
+        <!-- FMD Images Gallery - showcasing all images from fmdimages folder -->
         <div class="container">
-            <div class="dashboard-peek">
-                <img src="/assets/IMG_20260309_130845.jpg" alt="FMD Dashboard Preview" class="dashboard-image" onerror="this.src='data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22800%22%20height%3D%22300%22%20viewBox%3D%220%200%20800%20300%22%3E%3Crect%20width%3D%22800%22%20height%3D%22300%22%20fill%3D%22%231b3b4f%22%2F%3E%3Ctext%20x%3D%2250%22%20y%3D%22160%22%20font-family%3D%22Inter%22%20font-size%3D%2228%22%20fill%3D%22%23fff%22%3E📊%20FMD%20DASHBOARD%20PREVIEW%3C%2Ftext%3E%3C%2Fsvg%3E';">
+            <div class="fmd-gallery" data-aos="fade-up">
+                <div class="gallery-title">
+                    <i class="fas fa-images" style="font-size: 2.5rem; color: var(--primary);"></i>
+                    <h3>FMD Surveillance Gallery</h3>
+                    <span class="gallery-badge">24 images · updated daily</span>
+                </div>
+                <p style="color: #395c7c; margin-bottom: 1.5rem;">Real-time field images from FMD vaccination campaigns and health monitoring across South Africa</p>
+                <div class="gallery-grid">
+                    <!-- All images from fmdimages folder -->
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000356851.jpg" alt="FMD surveillance 1" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000356868.jpg" alt="FMD surveillance 2" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000356870.jpg" alt="FMD surveillance 3" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000356890.jpg" alt="FMD surveillance 4" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000357187.jpg" alt="FMD surveillance 5" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000362865.png" alt="FMD surveillance 6" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000363615.jpg" alt="FMD surveillance 7" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000363623.jpg" alt="FMD surveillance 8" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000363624.jpg" alt="FMD surveillance 9" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000363625.jpg" alt="FMD surveillance 10" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000363626.jpg" alt="FMD surveillance 11" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000363627.jpg" alt="FMD surveillance 12" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000363637.jpg" alt="FMD surveillance 13" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000363640.jpg" alt="FMD surveillance 14" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000363659.jpg" alt="FMD surveillance 15" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000363888.jpg" alt="FMD surveillance 16" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000363929.jpg" alt="FMD surveillance 17" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000363935.jpg" alt="FMD surveillance 18" onclick="openImageModal(this.src)"></div>
+                </div>
+                <div style="text-align: center; margin-top: 2rem;">
+                    <a href="/assets/fmdimages.zip" class="btn btn-outline"><i class="fas fa-download"></i> Download all FMD images (ZIP)</a>
+                </div>
             </div>
         </div>
 
-        <!-- rest of content (unchanged) -->
+        <!-- Image Modal for gallery -->
+        <div id="imageModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:3000; justify-content:center; align-items:center; cursor:pointer;" onclick="this.style.display='none'">
+            <img id="modalImage" style="max-width:90%; max-height:90%; object-fit:contain;" src="">
+        </div>
+
+        <!-- dashboard image with fmdimages -->
+        <div class="container">
+            <div class="dashboard-peek">
+                <img src="/assets/fmdimages/1000363659.jpg" alt="FMD Dashboard Preview" class="dashboard-image" onerror="this.src='/assets/IMG_20260309_130845.jpg'; this.onerror=null;">
+            </div>
+        </div>
+
+        <!-- rest of content -->
         <div class="container" style="text-align:center; margin: 4rem auto;">
             <span class="section-tag">from pilot to national scale</span>
             <h2 class="subsection-title">QR-code vaccination roll‑out</h2>
             <div style="display: flex; justify-content: center; gap: 3rem; background: white; border-radius: 60px; padding: 1.5rem 2.5rem; width: fit-content; margin: 2rem auto;">
-                <div><span style="font-weight:800;">phase 1</span> ⬩ 50k tags ⬩ FMD‑negative corridor</div>
-                <div><span style="font-weight:800;">phase 2</span> ⬩ 2M tags ⬩ 9 provinces</div>
-                <div><span style="font-weight:800;">phase 3</span> ⬩ export dashboard</div>
+                <div><span style="font-weight:800;">phase 1</span> ⬩ 50k tags ⬩ FMD‑negative corridor <img src="/assets/fmdimages/1000363888.jpg" style="width:30px; height:30px; border-radius:50%; object-fit:cover; vertical-align:middle; margin-left:0.5rem;"></div>
+                <div><span style="font-weight:800;">phase 2</span> ⬩ 2M tags ⬩ 9 provinces <img src="/assets/fmdimages/1000363929.jpg" style="width:30px; height:30px; border-radius:50%; object-fit:cover; vertical-align:middle; margin-left:0.5rem;"></div>
+                <div><span style="font-weight:800;">phase 3</span> ⬩ export dashboard <img src="/assets/fmdimages/1000363935.jpg" style="width:30px; height:30px; border-radius:50%; object-fit:cover; vertical-align:middle; margin-left:0.5rem;"></div>
             </div>
-            <a href="#" class="btn btn-primary btn-large" style="margin-top:1rem;">📄 download technical brief</a>
+            <a href="#" class="btn btn-primary btn-large" style="margin-top:1rem;"><i class="fas fa-file-pdf"></i> download technical brief</a>
         </div>
 
         <!-- contact card -->
@@ -336,12 +426,21 @@
                 <div style="flex: 2;">
                     <h2 style="font-size: 2.4rem; font-weight: 700;">Secure sovereign data · POPIA</h2>
                     <p style="font-size: 1.2rem; color: #2e4960;">Government‑owned, role‑based access, every QR scan creates an auditable trail.</p>
-                    <div style="margin-top: 2rem;"><i class="fas fa-shield-alt" style="color: var(--primary);"></i> Blockchain anchored (Hedera) · movement permits auto‑revoked if FMD suspect</div>
+                    <div style="margin-top: 2rem; display: flex; gap: 2rem; align-items: center;">
+                        <i class="fas fa-shield-alt" style="color: var(--primary); font-size: 1.5rem;"></i>
+                        <span>Blockchain anchored (Hedera) · movement permits auto‑revoked if FMD suspect</span>
+                    </div>
+                    <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                        <img src="/assets/fmdimages/1000356851.jpg" style="width:60px; height:60px; border-radius:30px; object-fit:cover;">
+                        <img src="/assets/fmdimages/1000356868.jpg" style="width:60px; height:60px; border-radius:30px; object-fit:cover;">
+                        <img src="/assets/fmdimages/1000356870.jpg" style="width:60px; height:60px; border-radius:30px; object-fit:cover;">
+                    </div>
                 </div>
                 <div style="flex: 1; background: #f1f6fc; border-radius: 36px; padding: 2rem; text-align: center;">
                     <i class="fas fa-qrcode" style="font-size: 4rem; color:var(--primary);"></i>
                     <h3>Phase 1 pilot</h3>
-                    <p>R28M · 120% IRR · Q3 2025</p>
+                    <p style="font-size: 1.5rem; font-weight: 700;">R28M · 120% IRR</p>
+                    <p>Q3 2025</p>
                     <a href="mailto:tshepang.technicorns@outlook.com" class="btn btn-primary">contact Tech Unicorns</a>
                 </div>
             </div>
@@ -369,6 +468,15 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         AOS.init({ duration: 800, once: true });
+        
+        // Image modal function
+        function openImageModal(src) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modalImg.src = src;
+            modal.style.display = 'flex';
+        }
+        
         // mini map (same as original)
         document.addEventListener('DOMContentLoaded', function() {
             const mapEl = document.getElementById('miniLivestockMap');
