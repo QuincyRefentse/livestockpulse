@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>FMD Surveillance Dashboard · Live Map View</title>
     <!-- Fonts, Icons, AOS, Leaflet, jsQR library -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,23 +16,112 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #f4f7fc; color: #0b1a2a; line-height: 1.5; }
         :root { --primary: #bc1c2e; --primary-dark: #9f1626; --success: #117f3a; --warning: #b85e00; --info: #2563eb; --neutral-900: #0f172a; --neutral-800: #1e293b; --gray-200: #e9edf2; }
-        .container { max-width: 1400px; margin: 0 auto; padding: 0 2rem; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 1.5rem; }
 
-        /* header (same as index) */
-        .header { position: fixed; width: 100%; top: 0; background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05); }
-        .navbar { display: flex; justify-content: space-between; align-items: center; height: 80px; }
-        .logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
-        .logo-img { height: 70px; width: auto; border-radius: 8px; }
-        .logo-text { font-size: 1.6rem; font-weight: 700; color: #0f172a; }
+        /* header (identical to index/process) */
+        .header { position: fixed; width: 100%; top: 0; background: rgba(255,255,255,0.95); backdrop-filter: blur(12px); z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .navbar { display: flex; justify-content: space-between; align-items: center; height: 70px; }
+        .logo { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; }
+        .logo-img { height: 60px; width: auto; border-radius: 6px; }
+        .logo-full { display: inline; }
+        .logo-short { display: none; }
+        .logo-text { font-size: 1.6rem; font-weight: 700; color: #0f172a; letter-spacing: -0.02em; white-space: nowrap; }
         .logo-text .text-red { color: var(--primary); }
-        .nav-menu { display: flex; gap: 2rem; list-style: none; }
-        .nav-link { text-decoration: none; color: var(--neutral-800); font-weight: 500; }
-        .btn { padding: 0.5rem 1.2rem; border-radius: 40px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.6rem; transition: 0.2s; border: none; font-size: 1rem; cursor: pointer; }
+        .nav-menu { display: flex; gap: 1.5rem; list-style: none; transition: all 0.3s ease; }
+        .nav-link { text-decoration: none; color: var(--neutral-800); font-weight: 500; font-size: 0.95rem; }
+        .btn { padding: 0.5rem 1rem; border-radius: 40px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.4rem; transition: 0.2s; cursor: pointer; border: none; font-size: 0.9rem; white-space: nowrap; }
         .btn-primary { background: var(--primary); color: white; border: 1px solid var(--primary); }
         .btn-outline { border: 1px solid var(--primary); color: var(--primary); background: transparent; }
+        .nav-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+
+        /* mobile adjustments & hamburger */
+        @media (max-width: 900px) { .logo-text { font-size: 1.4rem; } }
+        @media (max-width: 700px) { 
+            .logo-text { font-size: 1.2rem; } 
+            .logo-full { display: none; } 
+            .logo-short { display: inline; } 
+        }
+        @media (max-width: 600px) {
+            .nav-actions .btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+            .nav-actions .btn i { margin-right: 0; }
+            .nav-actions .btn span.hide-mobile { display: none; }
+        }
+        .hide-mobile { display: inline; }
+        @media (max-width: 600px) { .hide-mobile { display: none; } }
+
+        /* nav toggle (hamburger) */
+        .nav-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 8px;
+            margin-left: 8px;
+            z-index: 1100;
+        }
+        .nav-toggle span {
+            width: 24px;
+            height: 2px;
+            background: var(--neutral-800);
+            margin: 3px 0;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+        .nav-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(6px, 6px); }
+        .nav-toggle.active span:nth-child(2) { opacity: 0; }
+        .nav-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(6px, -6px); }
+
+        @media (max-width: 700px) {
+            .nav-menu {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                align-items: center;
+                gap: 0;
+                padding: 0;
+                max-height: 0;
+                overflow: hidden;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+                border-radius: 0 0 24px 24px;
+                transition: max-height 0.4s ease, padding 0.3s ease;
+                z-index: 999;
+                pointer-events: none;
+            }
+            .nav-menu.active {
+                max-height: 300px;
+                padding: 1rem 0;
+                pointer-events: all;
+                border-bottom: 2px solid var(--primary);
+            }
+            .nav-menu li {
+                width: 100%;
+                text-align: center;
+                opacity: 0;
+                transform: translateY(-10px);
+                transition: opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s;
+            }
+            .nav-menu.active li {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            .nav-menu .nav-link {
+                display: block;
+                padding: 0.9rem 1rem;
+                font-size: 1.1rem;
+                border-bottom: 1px solid #f0f0f0;
+                width: 100%;
+            }
+            .nav-menu li:last-child .nav-link { border-bottom: none; }
+            .nav-toggle { display: flex; }
+            .navbar { height: 70px; }
+        }
 
         /* dashboard layout */
-        .dashboard { padding: 130px 0 60px; }
+        .dashboard { padding: 100px 0 60px; }
         .dashboard-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 2rem; }
         .title-section h1 { font-size: 2.2rem; font-weight: 700; }
         .title-section .badge { background: rgba(188,28,46,0.1); color: var(--primary-dark); padding: 0.3rem 1rem; border-radius: 60px; font-size: 0.9rem; font-weight: 600; display: inline-block; margin-bottom: 0.5rem; }
@@ -52,6 +141,7 @@
 
         /* stats row */
         .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.5rem; margin-bottom: 2.5rem; }
+        @media (max-width:900px){ .stats-grid { grid-template-columns: 1fr 1fr; } }
         .stat-card { background: white; border-radius: 28px; padding: 1.8rem; border: 1px solid #deecf5; box-shadow: 0 6px 14px rgba(0,0,0,0.02); }
         .stat-title { color: #556b82; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 0.5rem; }
         .stat-number { font-size: 2.5rem; font-weight: 800; color: #0f172a; line-height: 1; }
@@ -60,8 +150,9 @@
         .stat-card.positive .stat-number { color: var(--primary); }
         .stat-card.negative .stat-number { color: var(--success); }
 
-        /* farm list / recent alerts */
+        /* split panel */
         .split-panel { display: grid; grid-template-columns: 1.4fr 1fr; gap: 2rem; margin-top: 1rem; }
+        @media (max-width:900px){ .split-panel { grid-template-columns: 1fr; } }
         .farm-table { background: white; border-radius: 36px; padding: 1.8rem; border: 1px solid #e2ebf6; }
         .farm-table h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.5rem; }
         .farm-row { display: flex; align-items: center; justify-content: space-between; padding: 0.8rem 0; border-bottom: 1px solid #edf2f7; }
@@ -84,7 +175,7 @@
         .alert-time { font-size: 0.75rem; color: #64748b; margin-bottom: 0.2rem; }
         .alert-desc { font-weight: 600; }
 
-        /* camera / QR modal */
+        /* camera / QR modal (identical) */
         .camera-modal {
             display: none;
             position: fixed;
@@ -94,10 +185,11 @@
             z-index: 2000;
             align-items: center;
             justify-content: center;
+            padding: 1rem;
         }
         .camera-card {
-            max-width: 700px;
-            width: 90%;
+            max-width: 600px;
+            width: 100%;
             background: #0b1f33;
             border-radius: 48px;
             padding: 1.5rem;
@@ -110,9 +202,10 @@
             align-items: center;
             color: white;
             margin-bottom: 1rem;
+            gap: 1rem;
         }
         .camera-header h3 {
-            font-weight: 600; display: flex; gap: 0.5rem;
+            font-weight: 600; display: flex; gap: 0.5rem; font-size: 1.2rem;
         }
         #closeCamera {
             background: transparent;
@@ -126,10 +219,11 @@
             width: 100%;
             border-radius: 32px;
             background: #1f3a57;
-            min-height: 350px;
+            min-height: 300px;
             object-fit: cover;
             border: 2px solid var(--primary);
             display: none;
+            transform: scaleX(-1);
         }
         .camera-placeholder {
             background: #102b3f;
@@ -138,17 +232,19 @@
             align-items: center;
             justify-content: center;
             color: white;
-            min-height: 350px;
+            min-height: 300px;
             border: 2px dashed var(--primary);
-            font-size: 1.2rem;
+            font-size: 1rem;
             flex-direction: column;
             gap: 1rem;
+            padding: 1rem;
+            text-align: center;
         }
         .mock-scan-line {
             width: 80%; height: 4px; background: var(--primary); opacity: 0.7; animation: scan 2s infinite;
         }
         @keyframes scan { 0% { transform: translateY(-30px); } 50% { transform: translateY(30px); } }
-        .permission-hint { color: #aaa; font-size: 0.9rem; margin-top: 1rem; }
+        .permission-hint { color: #aaa; font-size: 0.8rem; margin-top: 1rem; text-align: center; }
         .result-overlay {
             background: rgba(0,40,20,0.9);
             border-radius: 60px;
@@ -160,10 +256,8 @@
             border: 1px solid #00d4a0;
         }
 
-        .footer { background: #0f172a; color: white; padding: 3rem 0; margin-top: 4rem; }
-
-        /* small responsiveness */
-        @media (max-width: 900px) { .stats-grid { grid-template-columns: 1fr 1fr; } .split-panel { grid-template-columns: 1fr; } }
+        .footer { background: #0f172a; color: white; padding: 2rem 0; margin-top: 4rem; }
+        .footer a { color: #fca5a5; }
     </style>
 </head>
 <body>
@@ -171,24 +265,33 @@
         <div class="container">
             <nav class="navbar">
                 <a href="index.html" class="logo">
-                    <img src="/assets/livestockpulseA.png" alt="LivestockShield" class="logo-img">
-                    <span class="logo-text">Livestock<span class="text-red">pulseSA</span></span>
+                    <img src="/assets/livestockpulseA.png" alt="LivestockShield logo" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';" style="display:block;">
+                    <span class="logo-text" style="display:none;">🐄</span>
+                    <span class="logo-text"><span class="logo-full">Livestock</span><span class="text-red logo-full">pulseSA</span><span class="logo-short">L<span class="text-red">p</span></span></span>
                 </a>
-                <ul class="nav-menu">
+
+                <!-- Hamburger toggle (mobile) -->
+                <button class="nav-toggle" id="navToggle" aria-label="menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+
+                <ul class="nav-menu" id="navMenu">
                     <li><a href="index.html" class="nav-link">Vision</a></li>
                     <li><a href="process.html" class="nav-link">Process</a></li>
-                    <li><a href="dashbaord.html" class="nav-link">Dashboard</a></li>
+                    <li><a href="dashboard.html" class="nav-link active">Dashboard</a></li>
                 </ul>
+
                 <div class="nav-actions">
-                    <!-- Scan button triggers camera modal -->
-                    <button id="scanDemoBtn" class="btn btn-outline"><i class="fas fa-qrcode"></i> Scan</button>
+                    <button id="scanDemoBtn" class="btn btn-outline"><i class="fas fa-qrcode"></i> <span class="hide-mobile">Scan</span> demo</button>
                     <a href="#" class="btn btn-primary">Partner</a>
                 </div>
             </nav>
         </div>
     </header>
 
-    <!-- Camera/QR Modal -->
+    <!-- Camera/QR Modal (identical to process) -->
     <div id="cameraModal" class="camera-modal">
         <div class="camera-card">
             <div class="camera-header">
@@ -229,7 +332,6 @@
                 </div>
                 <div class="map-container">
                     <div id="fmdMap"></div>
-                    <!-- map legend overlay -->
                     <div class="map-legend">
                         <span class="legend-item"><span class="dot positive"></span> FMD positive</span>
                         <span class="legend-item"><span class="dot negative"></span> FMD negative</span>
@@ -251,7 +353,7 @@
                     <div class="stat-number">1,247</div>
                     <div class="stat-detail"><i class="fas fa-qrcode"></i> 847k animals tagged</div>
                 </div>
-                <div class="stat-card suspect">
+                <div class="stat-card">
                     <div class="stat-title">under observation</div>
                     <div class="stat-number">14</div>
                     <div class="stat-detail"><i class="fas fa-clock"></i> 6 farms with alerts</div>
@@ -265,7 +367,6 @@
 
             <!-- split panel: farm list + recent alerts -->
             <div class="split-panel" data-aos="fade-up" data-aos-delay="150">
-                <!-- left: table of farms -->
                 <div class="farm-table">
                     <h3><i class="fas fa-list" style="color: var(--primary);"></i> farms by status (QR-tagged)</h3>
                     <div class="farm-row">
@@ -294,7 +395,6 @@
                     </div>
                     <div style="margin-top: 1rem; text-align: center;"><a href="#" class="btn btn-outline" style="border-color: #ccdae8;">view all 78 farms</a></div>
                 </div>
-                <!-- right: recent alerts & movements -->
                 <div class="alert-card">
                     <h3><i class="fas fa-bell" style="color: var(--primary);"></i> recent alerts / scans</h3>
                     <div class="alert-item positive">
@@ -326,20 +426,20 @@
             <!-- footnote about demo data -->
             <div style="background: white; border-radius: 30px; padding: 1.2rem 2rem; margin-top: 2rem; border: 1px solid #deecf5; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
                 <i class="fas fa-info-circle" style="color: var(--primary); font-size: 1.6rem;"></i>
-                <span><strong>Demo dashboard</strong> · simulated FMD surveillance based on QR‑tagged farms. Each point on map represents a real geo‑coordinate with status (red = FMD positive, green = negative, orange = suspect).</span>
+                <span><strong>Demo dashboard</strong> · simulated FMD surveillance based on QR‑tagged farms. Each point on map represents a real geo‑coordinate with status.</span>
             </div>
         </div>
     </main>
 
     <footer class="footer">
         <div class="container">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center; text-align: center;">
                 <span>National Digital Livestock Vaccination & Health Monitoring System</span>
                 <span style="color:#bc1c2e;">⬩ QR per animal ⬩ FMD negative proof</span>
                 <span> Tshepang Masilo · <a href="mailto:tshepang.technicorns@outlook.com" style="color:white;">tshepang.technicorns@outlook.com</a></span>
             </div>
-            <hr style="border-color:#2d3f55; margin: 2rem 0;">
-            <div style="display: flex; gap: 2rem; font-size:0.9rem;">
+            <hr style="border-color:#2d3f55; margin: 1.5rem 0;">
+            <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; font-size:0.85rem;">
                 <span>© Tech Unicorns · demo version</span>
                 <span>POPIA compliant</span>
                 <span>DALRRD ready</span>
@@ -352,6 +452,28 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         AOS.init({ duration: 700, once: true });
+
+        // ---------- MOBILE DROPDOWN TOGGLE (identical) ----------
+        const navToggle = document.getElementById('navToggle');
+        const navMenu = document.getElementById('navMenu');
+        if (navToggle && navMenu) {
+            navToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const isActive = navMenu.classList.toggle('active');
+                this.classList.toggle('active', isActive);
+                document.body.style.overflow = isActive ? 'hidden' : '';
+            });
+            navMenu.querySelectorAll('.nav-link').forEach(link => link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                navToggle.classList.remove('active');
+                document.body.style.overflow = '';
+            }));
+            document.addEventListener('click', (event) => {
+                if (!navToggle.contains(event.target) && !navMenu.contains(event.target) && navMenu.classList.contains('active')) {
+                    navMenu.classList.remove('active'); navToggle.classList.remove('active'); document.body.style.overflow = '';
+                }
+            });
+        }
 
         // ---------- QR SCANNER (exactly same as process page) ----------
         const modal = document.getElementById('cameraModal');
@@ -393,21 +515,15 @@
 
         function scanQR() {
             if (!scanningActive) return;
-
             if (video.readyState === video.HAVE_ENOUGH_DATA) {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
                 canvas.width = video.videoWidth;
                 canvas.height = video.videoHeight;
-
                 if (canvas.width > 0 && canvas.height > 0) {
                     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
                     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                    
-                    const code = jsQR(imageData.data, canvas.width, canvas.height, {
-                        inversionAttempts: "dontInvert",
-                    });
-
+                    const code = jsQR(imageData.data, canvas.width, canvas.height, { inversionAttempts: "dontInvert" });
                     if (code) {
                         scanningActive = false;
                         video.pause();
@@ -428,9 +544,7 @@
             qrResultDiv.style.display = 'none';
             stopStream();
 
-            navigator.mediaDevices.getUserMedia({ 
-                video: { facingMode: 'environment' }
-            })
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
             .then(mediaStream => {
                 stream = mediaStream;
                 video.srcObject = stream;
@@ -483,7 +597,6 @@
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             }).addTo(map);
 
-            // Sample farm data (SA coordinates) with status
             const farms = [
                 { name: 'Middelburg Feedlot', lat: -25.7689, lng: 29.4648, status: 'positive', head: 847 },
                 { name: 'Vryburg Beef', lat: -26.9569, lng: 24.7284, status: 'negative', head: 2103 },
@@ -528,9 +641,9 @@
                     <div style="margin-top:6px;"><i class="fas fa-qrcode"></i> QR tagged · last scan 2h ago</div>
                 `, { maxWidth: 220 });
             });
-
-            var positiveGroup = L.featureGroup(farms.filter(f => f.status === 'positive').map(f => L.marker([f.lat, f.lng])));
-            map.fitBounds(positiveGroup.getBounds().pad(0.2));
+            // zoom to show all
+            const allBounds = farms.map(f => [f.lat, f.lng]);
+            if (allBounds.length) map.fitBounds(allBounds, { padding: [30,30] });
         });
     </script>
 </body>
