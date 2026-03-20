@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #f4f7fc; color: #0b1a2a; line-height: 1.5; }
@@ -21,7 +22,40 @@
         .header { position: fixed; width: 100%; top: 0; background: rgba(255,255,255,0.85); backdrop-filter: blur(12px); z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05); }
         .navbar { display: flex; justify-content: space-between; align-items: center; height: 80px; }
         
-        .logo-text span.text-red { color: var(--primary); }
+        /* ----- LOGO STYLES: desktop shows full text, mobile shows only "LP" ----- */
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+        .logo-img { height: 80px; width: auto; border-radius: 8px; transition: transform 0.2s ease; display: block; }
+        .logo-text {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #0f172a;
+            letter-spacing: -0.02em;
+            white-space: nowrap;
+        }
+        .logo-text .text-red { color: #bc1c2e; }
+        /* Full text spans: visible on desktop, hidden on mobile */
+        .logo-full-desktop { display: inline; }
+        .logo-short-mobile { display: none; }
+        
+        /* On mobile (max-width: 700px) we hide the full text and show only "LP" */
+        @media (max-width: 700px) {
+            .logo-img { height: 44px; }
+            .logo-text { font-size: 1.5rem; white-space: nowrap; }
+            .logo-full-desktop { display: none; }
+            .logo-short-mobile { display: inline; }
+            .navbar { height: 70px; }
+        }
+        /* extra small devices */
+        @media (max-width: 480px) {
+            .logo-text { font-size: 1.4rem; }
+            .logo-img { height: 38px; }
+        }
+        
         .nav-menu { display: flex; gap: 2rem; list-style: none; transition: all 0.3s ease; }
         .nav-link { text-decoration: none; color: var(--neutral-800); font-weight: 500; }
         .btn { padding: 0.5rem 1.2rem; border-radius: 40px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.6rem; transition: 0.2s; cursor: pointer; border: none; font-size: 1rem; }
@@ -90,18 +124,6 @@
         .dashboard-image { width: 100%; border-radius: 24px; border: 1px solid #cbdae9; box-shadow: 0 20px 30px -10px rgba(0,0,0,0.15); display: block; }
         .footer { background: #0f172a; color: white; padding: 3rem 0; margin-top: 4rem; }
 
-        /* Logo */
-        .logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
-        .logo-img { height: 80px; width: auto; border-radius: 8px; transition: transform 0.2s ease; }
-        .logo:hover .logo-img { transform: scale(1.05); }
-        .logo-text { font-size: 1.6rem; font-weight: 700; color: #0f172a; letter-spacing: -0.02em; }
-        .logo-text .text-red { color: #bc1c2e; }
-        .navbar { display: flex; align-items: center; justify-content: space-between; height: 80px; }
-        @media (max-width: 640px) {
-            .logo-img { height: 50px; }
-            .logo-text { font-size: 1.3rem; }
-        }
-
         img { background: #d1ddee; display: block; max-width:100%; height:auto; }
         .hero-image-placeholder { width: 100%; height: 100%; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
         .hero-image-placeholder img { width: 100%; height: 100%; object-fit: cover; }
@@ -112,11 +134,12 @@
         .camera-header { display:flex; justify-content:space-between; align-items:center; color:white; margin-bottom:1rem; }
         .camera-header h3 { font-weight:600; display:flex; gap:0.5rem; }
         #closeCamera { background:transparent; border:none; color:#ffb4b4; font-size:2rem; cursor:pointer; line-height:1; }
-        #cameraFeed { width:100%; border-radius:32px; background:#1f3a57; min-height:300px; object-fit:cover; border:2px solid var(--primary); transform:scaleX(-1); }
+        #cameraFeed { width:100%; border-radius:32px; background:#1f3a57; min-height:300px; object-fit:cover; border:2px solid var(--primary); transform:scaleX(-1); display: none; }
         .camera-placeholder { background:#102b3f; border-radius:32px; display:flex; align-items:center; justify-content:center; color:white; min-height:300px; border:2px dashed var(--primary); font-size:1.2rem; flex-direction:column; gap:1rem; }
         .mock-scan-line { width:80%; height:4px; background:var(--primary); opacity:0.7; animation:scan 2s infinite; }
         @keyframes scan { 0% { transform:translateY(-30px); } 50% { transform:translateY(30px); } }
         .permission-hint { color:#aaa; font-size:0.9rem; margin-top:1rem; }
+        .result-overlay { background: rgba(0,40,20,0.9); border-radius: 60px; padding: 1rem 2rem; margin-top: 1rem; color: #a3f0c5; font-weight: 600; text-align: center; border: 1px solid #00d4a0; display: none; }
 
         /* ========== MOBILE DROPDOWN (hamburger) ========== */
         .nav-toggle {
@@ -192,46 +215,50 @@
 </head>
 <body>
     <header class="header">
-    <div class="container">
-        <nav class="navbar">
-            <a href="/" class="logo">
-                <img src="/assets/livestockpulseA.png" alt="LivestockShield logo" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';" style="display:block;">
-                <span class="logo-text" style="display:none;">🐄</span>
-                <span class="logo-text"><span class="logo-full">Livestock</span><span class="text-red logo-full">PulseSA</span><span class="logo-short"><span class="text-red"></span></span></span>
-            </a>
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">
+                    <img src="/assets/livestockpulseA.png" alt="LivestockShield logo" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';" style="display:block;">
+                    <span class="logo-text" style="display:none;">🐄</span>
+                    <span class="logo-text"><span class="logo-full">Livestock</span><span class="text-red logo-full">PulseSA</span><span class="logo-short">L<span class="text-red">p</span></span></span>
+                </a>
 
-            <!-- Hamburger toggle (mobile only) -->
-            <button class="nav-toggle" id="navToggle" aria-label="menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
+                <!-- Hamburger toggle (mobile) -->
+                <button class="nav-toggle" id="navToggle" aria-label="menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
 
-            <ul class="nav-menu" id="navMenu">
+                <ul class="nav-menu" id="navMenu">
                     <li><a href="index.html" class="nav-link">Vision</a></li>
                     <li><a href="process.html" class="nav-link">Process</a></li>
                     <li><a href="dashbaord.html" class="nav-link">Dashboard</a></li>
                 </ul>
-            <div class="nav-actions">
-                <button id="scanDemoBtn" class="btn btn-outline"><i class="fas fa-qrcode"></i> Scan demo</button>
-                <a href="#" class="btn btn-primary">Partner</a>
-            </div>
-        </nav>
-    </div>
-</header>
 
-    <!-- camera modal (unchanged) -->
+                <div class="nav-actions">
+                    <button id="scanDemoBtn" class="btn btn-outline"><i class="fas fa-qrcode"></i> <span class="hide-mobile">Scan</span> demo</button>
+                    <a href="#" class="btn btn-primary">Partner</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- camera modal -->
     <div id="cameraModal" class="camera-modal">
         <div class="camera-card">
             <div class="camera-header">
                 <h3><i class="fas fa-qrcode" style="color:var(--primary);"></i> FMD status scanner · point at QR ear tag</h3>
                 <button id="closeCamera">&times;</button>
             </div>
-            <video id="cameraFeed" autoplay playsinline style="display: none;"></video>
+            <video id="cameraFeed" autoplay playsinline></video>
             <div id="cameraPlaceholder" class="camera-placeholder">
                 <i class="fas fa-camera" style="font-size: 4rem; opacity: 0.6;"></i>
                 <div class="mock-scan-line"></div>
                 <span>waiting for camera …</span>
+            </div>
+            <div id="qrResult" class="result-overlay">
+                <i class="fas fa-check-circle" style="color:#2ecc71;"></i> <span id="resultText"></span>
             </div>
             <p class="permission-hint"><i class="fas fa-info-circle"></i> This demo simulates scanning a QR code; after access is granted, camera feed will appear (mirrored). In production, QR detection would read FMD‑negative status.</p>
         </div>
@@ -373,55 +400,151 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
+        // Initialize AOS
         AOS.init({ duration: 800, once: true });
-        function openImageModal(src) { const modal = document.getElementById('imageModal'); const modalImg = document.getElementById('modalImage'); modalImg.src = src; modal.style.display = 'flex'; }
-        document.addEventListener('DOMContentLoaded', function() {
-            const mapEl = document.getElementById('miniLivestockMap');
-            if (mapEl) {
-                const map = L.map(mapEl, { center: [-28.4793, 24.6986], zoom: 5, zoomControl: false, attributionControl: false, scrollWheelZoom: false });
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
-                const farms = [ { lat: -25.7689, lng: 29.4648 }, { lat: -28.2308, lng: 28.3073 }, { lat: -26.9569, lng: 24.7284 }, { lat: -23.9045, lng: 29.4688 } ];
-                farms.forEach(f => L.marker([f.lat, f.lng], { icon: L.divIcon({ className: 'custom-marker', html: '<div style="background:#bc1c2e; width:12px; height:12px; border-radius:50%; border:2px solid white;"></div>', iconSize: [12,12] }) }).addTo(map));
-            }
-
-            // mobile dropdown
-            const navToggle = document.getElementById('navToggle');
-            const navMenu = document.getElementById('navMenu');
-            if (navToggle && navMenu) {
-                navToggle.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const isActive = navMenu.classList.toggle('active');
-                    this.classList.toggle('active', isActive);
-                    document.body.style.overflow = isActive ? 'hidden' : '';
-                });
-                navMenu.querySelectorAll('.nav-link').forEach(link => link.addEventListener('click', () => {
-                    navMenu.classList.remove('active');
-                    navToggle.classList.remove('active');
+        
+        // Gallery modal function
+        window.openImageModal = function(src) { 
+            const modal = document.getElementById('imageModal'); 
+            const modalImg = document.getElementById('modalImage'); 
+            modalImg.src = src; 
+            modal.style.display = 'flex'; 
+        };
+        
+        // Mobile dropdown menu functionality
+        const navToggle = document.getElementById('navToggle');
+        const navMenu = document.getElementById('navMenu');
+        
+        if (navToggle && navMenu) {
+            navToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const isActive = navMenu.classList.toggle('active');
+                this.classList.toggle('active', isActive);
+                document.body.style.overflow = isActive ? 'hidden' : '';
+            });
+            
+            navMenu.querySelectorAll('.nav-link').forEach(link => link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                navToggle.classList.remove('active');
+                document.body.style.overflow = '';
+            }));
+            
+            document.addEventListener('click', (e) => {
+                if (!navToggle.contains(e.target) && !navMenu.contains(e.target) && navMenu.classList.contains('active')) {
+                    navMenu.classList.remove('active'); 
+                    navToggle.classList.remove('active'); 
                     document.body.style.overflow = '';
-                }));
-                document.addEventListener('click', (e) => {
-                    if (!navToggle.contains(e.target) && !navMenu.contains(e.target) && navMenu.classList.contains('active')) {
-                        navMenu.classList.remove('active'); navToggle.classList.remove('active'); document.body.style.overflow = '';
-                    }
-                });
-            }
-        });
-
-        // camera logic (unchanged)
-        const modal = document.getElementById('cameraModal'); const video = document.getElementById('cameraFeed'); const placeholder = document.getElementById('cameraPlaceholder'); const closeBtn = document.getElementById('closeCamera'); const scanButtons = [document.getElementById('scanDemoBtn'), document.getElementById('heroScanBtn')];
-        let stream = null;
-        function stopStream() { if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; } }
-        function showCamera() {
-            modal.style.display = 'flex'; video.style.display = 'none'; placeholder.style.display = 'flex';
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }).then(mediaStream => {
-                stream = mediaStream; video.srcObject = stream;
-                video.onloadedmetadata = () => video.play().then(() => { placeholder.style.display = 'none'; video.style.display = 'block'; }).catch(()=>{ placeholder.innerHTML = `<i class="fas fa-exclamation-triangle"></i> could not play video`; });
-            }).catch(()=>{ placeholder.innerHTML = `<i class="fas fa-exclamation-triangle" style="font-size:3rem;"></i><span>Camera access denied.</span><span style="font-size:0.9rem;">(simulated demo)</span>`; });
+                }
+            });
         }
-        function hideCamera() { modal.style.display = 'none'; stopStream(); placeholder.innerHTML = `<i class="fas fa-camera" style="font-size: 4rem; opacity: 0.6;"></i><div class="mock-scan-line"></div><span>waiting for camera …</span>`; placeholder.style.display = 'flex'; video.style.display = 'none'; }
-        scanButtons.forEach(btn => btn && btn.addEventListener('click', (e) => { e.preventDefault(); showCamera(); }));
-        closeBtn.addEventListener('click', hideCamera);
-        modal.addEventListener('click', (e) => { if(e.target === modal) hideCamera(); });
+        
+        // Initialize mini map
+        const mapEl = document.getElementById('miniLivestockMap');
+        if (mapEl) {
+            const map = L.map(mapEl, { center: [-28.4793, 24.6986], zoom: 5, zoomControl: false, attributionControl: false, scrollWheelZoom: false });
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
+            const farms = [ { lat: -25.7689, lng: 29.4648 }, { lat: -28.2308, lng: 28.3073 }, { lat: -26.9569, lng: 24.7284 }, { lat: -23.9045, lng: 29.4688 } ];
+            farms.forEach(f => L.marker([f.lat, f.lng], { icon: L.divIcon({ className: 'custom-marker', html: '<div style="background:#bc1c2e; width:12px; height:12px; border-radius:50%; border:2px solid white;"></div>', iconSize: [12,12] }) }).addTo(map));
+        }
+        
+        // Camera/QR scanning logic
+        const modal = document.getElementById('cameraModal'); 
+        const video = document.getElementById('cameraFeed'); 
+        const placeholder = document.getElementById('cameraPlaceholder'); 
+        const closeBtn = document.getElementById('closeCamera'); 
+        const qrResultDiv = document.getElementById('qrResult');
+        const resultSpan = document.getElementById('resultText');
+        const scanButtons = [document.getElementById('scanDemoBtn'), document.getElementById('heroScanBtn')];
+        
+        let stream = null;
+        let scanningActive = false;
+        let animationId = null;
+        
+        function stopStream() { 
+            if(stream){ 
+                stream.getTracks().forEach(t=>t.stop()); 
+                stream=null; 
+            }
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+            scanningActive = false;
+        }
+        
+        function scanQR() {
+            if (!scanningActive) return;
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                if (canvas.width > 0 && canvas.height > 0) {
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const code = jsQR(imageData.data, canvas.width, canvas.height, { inversionAttempts: "dontInvert" });
+                    if (code) {
+                        scanningActive = false;
+                        video.pause();
+                        resultSpan.innerText = `✅ FMD‑NEGATIVE | Animal ID: ${code.data} | Status: vaccinated, booster valid.`;
+                        qrResultDiv.style.display = 'block';
+                    }
+                }
+            }
+            if (scanningActive) {
+                animationId = requestAnimationFrame(scanQR);
+            }
+        }
+        
+        function showCamera() {
+            modal.style.display = 'flex'; 
+            video.style.display = 'none'; 
+            placeholder.style.display = 'flex';
+            qrResultDiv.style.display = 'none';
+            stopStream();
+            
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+                .then(mediaStream => {
+                    stream = mediaStream; 
+                    video.srcObject = stream;
+                    video.onloadedmetadata = () => video.play()
+                        .then(() => { 
+                            placeholder.style.display = 'none'; 
+                            video.style.display = 'block';
+                            scanningActive = true;
+                            scanQR();
+                        })
+                        .catch(()=>{ 
+                            placeholder.innerHTML = `<i class="fas fa-exclamation-triangle"></i> could not play video`; 
+                        });
+                })
+                .catch(()=>{ 
+                    placeholder.innerHTML = `<i class="fas fa-exclamation-triangle" style="font-size:3rem;"></i><span>Camera access denied.</span><span style="font-size:0.9rem;">(simulated demo)</span>`;
+                    setTimeout(() => {
+                        if (modal.style.display === 'flex') {
+                            resultSpan.innerText = `✅ FMD‑NEGATIVE (simulated) | Animal ID: ZA-FMD-8472 | Status: vaccinated, booster valid.`;
+                            qrResultDiv.style.display = 'block';
+                        }
+                    }, 2000);
+                });
+        }
+        
+        function hideCamera() { 
+            modal.style.display = 'none'; 
+            stopStream(); 
+            placeholder.innerHTML = `<i class="fas fa-camera" style="font-size: 4rem; opacity: 0.6;"></i><div class="mock-scan-line"></div><span>waiting for camera …</span>`; 
+            placeholder.style.display = 'flex'; 
+            video.style.display = 'none';
+            qrResultDiv.style.display = 'none';
+        }
+        
+        scanButtons.forEach(btn => btn && btn.addEventListener('click', (e) => { 
+            e.preventDefault(); 
+            showCamera(); 
+        }));
+        
+        if (closeBtn) closeBtn.addEventListener('click', hideCamera);
+        if (modal) modal.addEventListener('click', (e) => { if(e.target === modal) hideCamera(); });
         window.addEventListener('beforeunload', stopStream);
     </script>
 </body>
