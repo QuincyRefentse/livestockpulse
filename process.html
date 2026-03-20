@@ -28,47 +28,6 @@
         .btn-primary { background: var(--primary); color: white; border: 1px solid var(--primary); }
         .btn-outline { border: 1px solid var(--primary); color: var(--primary); background: transparent; }
 
-        /* Logo styles - ADD THESE (they're missing in your current file) */
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            text-decoration: none;
-        }
-        .logo-img {
-            height: 80px;
-            width: auto;
-            border-radius: 8px;
-            transition: transform 0.2s ease;
-        }
-        .logo:hover .logo-img {
-            transform: scale(1.05);
-        }
-        .logo-full { display: inline; }
-        .logo-short { display: none; }
-        .logo-text {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: #0f172a;
-            letter-spacing: -0.02em;
-        }
-        .logo-text .text-red {
-            color: #bc1c2e;
-        }
-        
-        @media (max-width: 900px) {
-            .logo-text { font-size: 1.4rem; }
-        }
-        @media (max-width: 700px) {
-            .logo-text { font-size: 1.2rem; }
-            .logo-full { display: none; }
-            .logo-short { display: inline; }
-        }
-        @media (max-width: 480px) {
-            .logo-text { font-size: 1rem; }
-            .logo-img { height: 40px; }
-        }
-
         /* HERO */
         .hero { position: relative; padding: 130px 0 70px; background: linear-gradient(165deg, #ffffff 0%, #f0f5fa 100%); overflow: hidden; }
         .hero-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 3rem; align-items: start; }
@@ -130,6 +89,18 @@
         .dashboard-peek { background: #f8fbff; border-radius: 40px; padding: 2rem; margin: 4rem 0; }
         .dashboard-image { width: 100%; border-radius: 24px; border: 1px solid #cbdae9; box-shadow: 0 20px 30px -10px rgba(0,0,0,0.15); display: block; }
         .footer { background: #0f172a; color: white; padding: 3rem 0; margin-top: 4rem; }
+
+        /* Logo */
+        .logo { display: flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+        .logo-img { height: 80px; width: auto; border-radius: 8px; transition: transform 0.2s ease; }
+        .logo:hover .logo-img { transform: scale(1.05); }
+        .logo-text { font-size: 1.6rem; font-weight: 700; color: #0f172a; letter-spacing: -0.02em; }
+        .logo-text .text-red { color: #bc1c2e; }
+        .navbar { display: flex; align-items: center; justify-content: space-between; height: 80px; }
+        @media (max-width: 640px) {
+            .logo-img { height: 50px; }
+            .logo-text { font-size: 1.3rem; }
+        }
 
         img { background: #d1ddee; display: block; max-width:100%; height:auto; }
         .hero-image-placeholder { width: 100%; height: 100%; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
@@ -221,36 +192,237 @@
 </head>
 <body>
     <header class="header">
-        <div class="container">
-            <nav class="navbar">
-                <a href="/" class="logo">
-                    <img src="/assets/livestockpulseA.png" alt="LivestockShield logo" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';" style="display:block;">
-                    <span class="logo-text" style="display:none;">🐄</span>
-                    <!-- FIXED: This matches your working index.html -->
-                    <span class="logo-text"><span class="logo-full">Livestock</span><span class="text-red logo-full">pulseSA</span><span class="logo-short">L<span class="text-red">P</span></span></span>
-                </a>
+    <div class="container">
+        <nav class="navbar">
+            <a href="/" class="logo">
+                <img src="/assets/livestockpulseA.png" alt="LivestockShield logo" class="logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';" style="display:block;">
+                <span class="logo-text" style="display:none;">🐄</span>
+                <span class="logo-text"><span class="logo-full">Livestock</span><span class="text-red logo-full">pulseSA</span><span class="logo-short">L<span class="text-red">p</span></span></span>
+            </a>
 
-                <!-- Hamburger toggle (mobile only) -->
-                <button class="nav-toggle" id="navToggle" aria-label="menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
+            <!-- Hamburger toggle (mobile only) -->
+            <button class="nav-toggle" id="navToggle" aria-label="menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
 
-                <ul class="nav-menu" id="navMenu">
+            <ul class="nav-menu" id="navMenu">
                     <li><a href="index.html" class="nav-link">Vision</a></li>
-                    <li><a href="process.html" class="nav-link active">Process</a></li>
-                    <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
+                    <li><a href="process.html" class="nav-link">Process</a></li>
+                    <li><a href="dashbaord.html" class="nav-link">Dashboard</a></li>
                 </ul>
-                <div class="nav-actions">
-                    <button id="scanDemoBtn" class="btn btn-outline"><i class="fas fa-qrcode"></i> Scan demo</button>
-                    <a href="#" class="btn btn-primary">Partner</a>
-                </div>
-            </nav>
-        </div>
-    </header>
+            <div class="nav-actions">
+                <button id="scanDemoBtn" class="btn btn-outline"><i class="fas fa-qrcode"></i> Scan demo</button>
+                <a href="#" class="btn btn-primary">Partner</a>
+            </div>
+        </nav>
+    </div>
+</header>
 
-    <!-- rest of your content remains exactly the same -->
-    <!-- ... -->
+    <!-- camera modal (unchanged) -->
+    <div id="cameraModal" class="camera-modal">
+        <div class="camera-card">
+            <div class="camera-header">
+                <h3><i class="fas fa-qrcode" style="color:var(--primary);"></i> FMD status scanner · point at QR ear tag</h3>
+                <button id="closeCamera">&times;</button>
+            </div>
+            <video id="cameraFeed" autoplay playsinline style="display: none;"></video>
+            <div id="cameraPlaceholder" class="camera-placeholder">
+                <i class="fas fa-camera" style="font-size: 4rem; opacity: 0.6;"></i>
+                <div class="mock-scan-line"></div>
+                <span>waiting for camera …</span>
+            </div>
+            <p class="permission-hint"><i class="fas fa-info-circle"></i> This demo simulates scanning a QR code; after access is granted, camera feed will appear (mirrored). In production, QR detection would read FMD‑negative status.</p>
+        </div>
+    </div>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <div class="hero-grid">
+                    <div class="hero-content" data-aos="fade-right">
+                        <div class="hero-badge"><span class="badge-pulse"></span> National FMD programme · QR-tagged</div>
+                        <h1 class="hero-title">From ear tag to national dashboard: <span class="text-gradient-red">proven FMD‑negative</span> by QR identity</h1>
+                        <p class="hero-description">Step 1: every vaccinated animal receives a unique, tamper-resistant QR ear tag. Scan to retrieve FMD‑negative status, full vaccination history, and movement permits — all verified in real time.</p>
+                        <div class="stat-banner">
+                            <div class="stat-item"><span class="stat-value">847k</span><span class="stat-label">tagged cattle</span></div>
+                            <div class="stat-item"><span class="stat-value">100%</span><span class="stat-label">FMD‑negative in pilot</span></div>
+                            <div class="stat-item"><span class="stat-value">24h</span><span class="stat-label">trace complete</span></div>
+                        </div>
+                        <div class="hero-cta">
+                            <button id="heroScanBtn" class="btn btn-primary btn-large"><i class="fas fa-qrcode"></i> See QR tag in action</button>
+                            <a href="#" class="btn btn-outline btn-large">How it works</a>
+                        </div>
+                        <div style="display: flex; gap: 1.2rem; margin-top: 1.8rem; flex-wrap:wrap;">
+                            <span><i class="fas fa-check-circle" style="color:#117f3a;"></i> POPIA compliant</span>
+                            <span><i class="fas fa-check-circle" style="color:#117f3a;"></i> DALRRD ready</span>
+                        </div>
+                    </div>
+                    <div class="hero-visual" data-aos="fade-left">
+                        <div class="hero-image-placeholder">
+                            <img src="/assets/fmdimages/1000363625.jpg" alt="FMD vaccinated cattle" onerror="this.src='/assets/IMG-20260309-WA0005.jpg'; this.onerror=null;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- process grid -->
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">national digital livestock ecosystem</span>
+                <h2 class="subsection-title">QR‑code identification from farm to export</h2>
+            </div>
+            <div class="process-grid">
+                <div class="process-card">
+                    <div class="process-icon"><img src="/assets/fmdimages/ear.jpg" alt="QR ear tag" style="width:100%; height:100%; object-fit:cover; border-radius:30px;" onerror="this.src='/assets/qrcode.jpg'; this.onerror=null;"></div>
+                    <h4>1. QR ear tag</h4><p>Unique ID per bovine, weather-resistant, tamper‑proof, scanned via smartphone.</p>
+                </div>
+                <div class="process-card">
+                    <div class="process-icon"><img src="/assets/fmdimages/1000366868.jpg" alt="Vaccination registry" style="width:100%; height:100%; object-fit:cover; border-radius:30px;" onerror="this.src='/assets/Cattle-vaccination-c-AdobeStock_289582852-web-1024x577.jpg'; this.onerror=null;"></div>
+                    <h4>2. Vaccination registry</h4><p>Vaccine batch, vet ID, booster schedule — all linked to QR.</p>
+                </div>
+                <div class="process-card">
+                    <div class="process-icon"><img src="/assets/fmdimages/health.jpg" alt="Daily health check" style="width:100%; height:100%; object-fit:cover; border-radius:30px;" onerror="this.src='/assets/negative.jpg'; this.onerror=null;"></div>
+                    <h4>3. Daily health check</h4><p>Farmer scans & submits symptoms (photos, mobility) → early alert.</p>
+                </div>
+                <div class="process-card">
+                    <div class="process-icon"><img src="/assets/fmdimages/1000363935.jpg" alt="Movement scan" style="width:100%; height:100%; object-fit:cover; border-radius:30px;" onerror="this.src='/assets/negative.jpg'; this.onerror=null;"></div>
+                    <h4>4. Movement scan</h4><p>Auctions, abattoirs, transport — scan logs location, prevents non‑compliant moves.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- FMD Images Gallery -->
+        <div class="container">
+            <div class="fmd-gallery" data-aos="fade-up">
+                <div class="gallery-title">
+                    <i class="fas fa-images" style="font-size: 2.5rem; color: var(--primary);"></i>
+                    <h3>FMD Surveillance Gallery</h3>
+                    <span class="gallery-badge">24 images · updated daily</span>
+                </div>
+                <p style="color: #395c7c; margin-bottom: 1.5rem;">Real-time field images from FMD vaccination campaigns and health monitoring across South Africa</p>
+                <div class="gallery-grid">
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000356851.jpg" alt="FMD 1" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000356868.jpg" alt="FMD 2" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000356870.jpg" alt="FMD 3" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000356890.jpg" alt="FMD 4" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000357187.jpg" alt="FMD 5" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000362865.png" alt="FMD 6" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000363615.jpg" alt="FMD 7" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000363623.jpg" alt="FMD 8" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000363624.jpg" alt="FMD 9" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000363625.jpg" alt="FMD 10" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000363626.jpg" alt="FMD 11" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000363627.jpg" alt="FMD 12" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000363637.jpg" alt="FMD 13" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000363640.jpg" alt="FMD 14" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000363659.jpg" alt="FMD 15" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000363888.jpg" alt="FMD 16" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000363929.jpg" alt="FMD 17" onclick="openImageModal(this.src)"></div>
+                    <div class="gallery-item"><img src="/assets/fmdimages/1000363935.jpg" alt="FMD 18" onclick="openImageModal(this.src)"></div>
+                </div>
+                <div style="text-align: center; margin-top: 2rem;"><a href="/assets/fmdimages.zip" class="btn btn-outline"><i class="fas fa-download"></i> Download all FMD images (ZIP)</a></div>
+            </div>
+        </div>
+
+        <!-- Image Modal for gallery -->
+        <div id="imageModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:3000; justify-content:center; align-items:center; cursor:pointer;" onclick="this.style.display='none'"><img id="modalImage" style="max-width:90%; max-height:90%; object-fit:contain;"></div>
+
+        <!-- dashboard image -->
+        <div class="container"><div class="dashboard-peek"><img src="/assets/fmdimages/1000363929.jpg" alt="FMD Dashboard Preview" class="dashboard-image" onerror="this.src='/assets/IMG_20260309_130845.jpg'; this.onerror=null;"></div></div>
+
+        <!-- roll-out -->
+        <div class="container" style="text-align:center; margin:4rem auto;">
+            <span class="section-tag">from pilot to national scale</span>
+            <h2 class="subsection-title">QR-code vaccination roll‑out</h2>
+            <div style="display: flex; justify-content: center; gap: 3rem; background: white; border-radius: 60px; padding: 1.5rem 2.5rem; width: fit-content; margin: 2rem auto; flex-wrap:wrap;">
+                <div><span style="font-weight:800;">phase 1</span> ⬩ 50k tags ⬩ FMD‑negative corridor <img src="/assets/fmdimages/1000363888.jpg" style="width:30px; height:30px; border-radius:50%; object-fit:cover; vertical-align:middle; margin-left:0.5rem;"></div>
+                <div><span style="font-weight:800;">phase 2</span> ⬩ 2M tags ⬩ 9 provinces <img src="/assets/fmdimages/1000363929.jpg" style="width:30px; height:30px; border-radius:50%; object-fit:cover; vertical-align:middle; margin-left:0.5rem;"></div>
+                <div><span style="font-weight:800;">phase 3</span> ⬩ export dashboard <img src="/assets/fmdimages/1000363935.jpg" style="width:30px; height:30px; border-radius:50%; object-fit:cover; vertical-align:middle; margin-left:0.5rem;"></div>
+            </div>
+            <a href="#" class="btn btn-primary btn-large" style="margin-top:1rem;"><i class="fas fa-file-pdf"></i> download technical brief</a>
+        </div>
+
+        <!-- contact card -->
+        <div class="container" style="background: white; border-radius: 48px; padding: 3rem; box-shadow: 0 20px 30px -20px #00000030; margin-bottom: 4rem;">
+            <div style="display: flex; gap: 2rem; flex-wrap: wrap; align-items: center;">
+                <div style="flex: 2;">
+                    <h2 style="font-size: 2.4rem; font-weight: 700;">Secure sovereign data · POPIA</h2>
+                    <p style="font-size: 1.2rem; color: #2e4960;">Government‑owned, role‑based access, every QR scan creates an auditable trail.</p>
+                    <div style="margin-top: 2rem; display: flex; gap: 2rem; align-items: center; flex-wrap:wrap;"><i class="fas fa-shield-alt" style="color: var(--primary); font-size: 1.5rem;"></i><span>Blockchain anchored (Hedera) · movement permits auto‑revoked if FMD suspect</span></div>
+                    <div style="margin-top: 1.5rem; display: flex; gap: 1rem; flex-wrap:wrap;">
+                        <img src="/assets/fmdimages/1000356851.jpg" style="width:60px; height:60px; border-radius:30px; object-fit:cover;">
+                        <img src="/assets/fmdimages/1000356868.jpg" style="width:60px; height:60px; border-radius:30px; object-fit:cover;">
+                        <img src="/assets/fmdimages/1000356870.jpg" style="width:60px; height:60px; border-radius:30px; object-fit:cover;">
+                    </div>
+                </div>
+                <div style="flex: 1; background: #f1f6fc; border-radius: 36px; padding: 2rem; text-align: center;">
+                    <i class="fas fa-qrcode" style="font-size: 4rem; color:var(--primary);"></i>
+                    <h3>Phase 1 pilot</h3>
+                    <p style="font-size: 1.5rem; font-weight: 700;">R28M · 120% IRR</p><p>Q3 2025</p>
+                    <a href="mailto:tshepang.technicorns@outlook.com" class="btn btn-primary">contact Tech Unicorns</a>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer"><div class="container"><div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;"><span>National Digital Livestock Vaccination & Health Monitoring System</span><span style="color:#bc1c2e;">⬩ QR per animal ⬩ FMD negative proof</span><span> Tshepang Masilo · <a href="mailto:tshepang.technicorns@outlook.com" style="color:white;">tshepang.technicorns@outlook.com</a></span></div><hr style="border-color:#2d3f55; margin:2rem 0;"><div style="display: flex; gap: 2rem; font-size:0.9rem; flex-wrap:wrap;"><span>© Tech Unicorns · all rights reserved</span><span>POPIA compliant</span><span>DALRRD ready</span></div></div></footer>
+    </main>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true });
+        function openImageModal(src) { const modal = document.getElementById('imageModal'); const modalImg = document.getElementById('modalImage'); modalImg.src = src; modal.style.display = 'flex'; }
+        document.addEventListener('DOMContentLoaded', function() {
+            const mapEl = document.getElementById('miniLivestockMap');
+            if (mapEl) {
+                const map = L.map(mapEl, { center: [-28.4793, 24.6986], zoom: 5, zoomControl: false, attributionControl: false, scrollWheelZoom: false });
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(map);
+                const farms = [ { lat: -25.7689, lng: 29.4648 }, { lat: -28.2308, lng: 28.3073 }, { lat: -26.9569, lng: 24.7284 }, { lat: -23.9045, lng: 29.4688 } ];
+                farms.forEach(f => L.marker([f.lat, f.lng], { icon: L.divIcon({ className: 'custom-marker', html: '<div style="background:#bc1c2e; width:12px; height:12px; border-radius:50%; border:2px solid white;"></div>', iconSize: [12,12] }) }).addTo(map));
+            }
+
+            // mobile dropdown
+            const navToggle = document.getElementById('navToggle');
+            const navMenu = document.getElementById('navMenu');
+            if (navToggle && navMenu) {
+                navToggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const isActive = navMenu.classList.toggle('active');
+                    this.classList.toggle('active', isActive);
+                    document.body.style.overflow = isActive ? 'hidden' : '';
+                });
+                navMenu.querySelectorAll('.nav-link').forEach(link => link.addEventListener('click', () => {
+                    navMenu.classList.remove('active');
+                    navToggle.classList.remove('active');
+                    document.body.style.overflow = '';
+                }));
+                document.addEventListener('click', (e) => {
+                    if (!navToggle.contains(e.target) && !navMenu.contains(e.target) && navMenu.classList.contains('active')) {
+                        navMenu.classList.remove('active'); navToggle.classList.remove('active'); document.body.style.overflow = '';
+                    }
+                });
+            }
+        });
+
+        // camera logic (unchanged)
+        const modal = document.getElementById('cameraModal'); const video = document.getElementById('cameraFeed'); const placeholder = document.getElementById('cameraPlaceholder'); const closeBtn = document.getElementById('closeCamera'); const scanButtons = [document.getElementById('scanDemoBtn'), document.getElementById('heroScanBtn')];
+        let stream = null;
+        function stopStream() { if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; } }
+        function showCamera() {
+            modal.style.display = 'flex'; video.style.display = 'none'; placeholder.style.display = 'flex';
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }).then(mediaStream => {
+                stream = mediaStream; video.srcObject = stream;
+                video.onloadedmetadata = () => video.play().then(() => { placeholder.style.display = 'none'; video.style.display = 'block'; }).catch(()=>{ placeholder.innerHTML = `<i class="fas fa-exclamation-triangle"></i> could not play video`; });
+            }).catch(()=>{ placeholder.innerHTML = `<i class="fas fa-exclamation-triangle" style="font-size:3rem;"></i><span>Camera access denied.</span><span style="font-size:0.9rem;">(simulated demo)</span>`; });
+        }
+        function hideCamera() { modal.style.display = 'none'; stopStream(); placeholder.innerHTML = `<i class="fas fa-camera" style="font-size: 4rem; opacity: 0.6;"></i><div class="mock-scan-line"></div><span>waiting for camera …</span>`; placeholder.style.display = 'flex'; video.style.display = 'none'; }
+        scanButtons.forEach(btn => btn && btn.addEventListener('click', (e) => { e.preventDefault(); showCamera(); }));
+        closeBtn.addEventListener('click', hideCamera);
+        modal.addEventListener('click', (e) => { if(e.target === modal) hideCamera(); });
+        window.addEventListener('beforeunload', stopStream);
+    </script>
 </body>
 </html>
