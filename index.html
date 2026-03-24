@@ -245,6 +245,197 @@
         </div>
     </div>
 
+    <!-- 
+  ...Your previous code remains unchanged before the script section
+-->
+
+<!-- Add this QR + data form right after your camera modal, hidden by default -->
+<form id="animalForm" style="display:none; margin:2rem auto; max-width:400px; background:white; border-radius:24px; box-shadow:0 4px 18px #0001; padding: 2rem;">
+    <h3 style="margin-bottom: 1rem; color:#bc1c2e;"><i class="fas fa-qrcode"></i> Register Animal</h3>
+    <label>Animal ID (from QR):<br>
+        <input type="text" id="animalId" readonly style="width:100%;margin-bottom:8px;">
+    </label><br>
+    <label>FMD Status:<br>
+        <select id="fmdStatus" style="width:100%;margin-bottom:8px;">
+            <option value="Healthy">Healthy</option>
+            <option value="Suspect">Suspect</option>
+            <option value="Infected">Infected</option>
+        </select>
+    </label><br>
+    <label>Location:<br>
+        <input type="text" id="animalLocation" readonly style="width:100%;margin-bottom:8px;">
+    </label><br>
+    <label>QR Image Preview:<br>
+        <img id="qrImagePreview" style="max-width:180px; border-radius:12px; margin-bottom:10px;">
+    </label><br>
+    <button type="submit" class="btn btn-primary">Save Animal</button>
+</form>
+
+<!-- Add a hidden canvas for capturing QR image from video -->
+<canvas id="qrCaptureCanvas" style="display:none;"></canvas>
+
+<!-- ...your other HTML code unchanged... -->
+
+<!-- At the end, include jsQR, then your initialization script: -->
+<script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
+<script>
+AOS.init({ duration: 800, once: true });
+
+// ... keep your other map/menu code unchanged ...
+
+const modal = document.getElementById('cameraModal');
+const video = document.getElementById('cameraFeed');
+const placeholder = document.getElementById('cameraPlaceholder');
+const closeBtn = document.getElementById('closeCamera');
+const scanButtons = [document.getElementById('scanDemoBtn'), document.getElementById('heroScanBtn')];
+
+let stream = null;
+let qrScanInterval = null;
+
+// ========== QR SCANNER CORE ========== //
+
+function stopStream() {
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+    }
+    if (qrScanInterval) {
+        clearInterval(qrScanInterval);
+        qrScanInterval = null;
+    }
+}
+
+function showCamera() {
+    modal.style.display = 'flex';
+    video.style.display = 'none';
+    placeholder.style.display = 'flex';
+
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+        .then(mediaStream => {
+            stream = mediaStream;
+            video.srcObject = stream;
+            video.onloadedmetadata = () => {
+                video.play().then(() => {
+                    placeholder.style.display = 'none';
+                    video.style.display = 'block';
+                    startQRScan();
+                }).catch(e => {
+                    placeholder.innerHTML = `<i class="fas fa-exclamation-triangle"></i> could not play video`;
+                });
+            };
+        })
+        .catch(err => {
+            placeholder.innerHTML = `
+                <i class="fas fa-exclamation-triangle" style="font-size:2.5rem;"></i>
+                <span>Camera access denied.</span>
+                <span style="font-size:0.8rem;">(simulated demo)</span>
+            `;
+        });
+}
+
+function hideCamera() {
+    modal.style.display = 'none';
+    stopStream();
+    placeholder.innerHTML = `
+        <i class="fas fa-camera" style="font-size: 4rem; opacity: 0.6;"></i>
+        <div class="mock-scan-line"></div>
+        <span>waiting for camera …</span>
+    `;
+    placeholder.style.display = 'flex';
+    video.style.display = 'none';
+}
+
+scanButtons.forEach(btn => {
+    if (btn) btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        showCamera();
+    });
+});
+if (closeBtn) closeBtn.addEventListener('click', hideCamera);
+modal.addEventListener('click', (e) => {
+    if (e.target === modal) hideCamera();
+});
+window.addEventListener('beforeunload', stopStream);
+
+
+// =========== QR SCAN LOOP ==============
+
+function startQRScan() {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    qrScanInterval = setInterval(() => {
+        if (!video.videoWidth) return; // Wait for video ready
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const code = jsQR(imgData.data, canvas.width, canvas.height);
+        if (code) {
+            // Got QR code!
+            onQRDetected(code.data);
+        }
+    }, 400); // Scan every 400ms
+}
+
+function onQRDetected(qrText) {
+    // Stop scanning, hide camera
+    hideCamera();
+
+    // Save a snapshot from the video feed
+    const canvas = document.getElementById('qrCaptureCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const imageBase64 = canvas.toDataURL('image/png');
+
+    // Fill in the animal form
+    document.getElementById('animalId').value = qrText;
+    document.getElementById('qrImagePreview').src = imageBase64;
+
+    // Get geolocation if possible, put in location field
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(function(pos) {
+            document.getElementById('animalLocation').value =
+                pos.coords.latitude + "," + pos.coords.longitude;
+        }, function() {
+            document.getElementById('animalLocation').value = "";
+        });
+    }
+
+    // Show the form
+    document.getElementById('animalForm').style.display = 'block';
+}
+
+// =========== FORM SUBMIT ==============
+
+document.getElementById('animalForm').onsubmit = async function(e) {
+    e.preventDefault();
+    // Get values
+    const id = document.getElementById('animalId').value;
+    const fmd_status = document.getElementById('fmdStatus').value;
+    const location = document.getElementById('animalLocation').value;
+    const imageBase64 = document.getElementById('qrImagePreview').src;
+
+    // Send to Netlify Function endpoint (replace with your actual endpoint)
+    const res = await fetch('/.netlify/functions/save-animal', {
+        method: 'POST',
+        body: JSON.stringify({ id, fmd_status, location, imageBase64 }),
+        headers: { 'Content-Type': 'application/json' }
+    });
+
+    if (res.ok) {
+        alert('Animal registered!');
+        document.getElementById('animalForm').reset();
+        document.getElementById('animalForm').style.display = "none";
+        document.getElementById('qrImagePreview').src = "";
+        // Optionally refresh dashboard or do something else here
+    } else {
+        alert('Error saving animal!');
+    }
+};
+</script>
+
     <main>
         <section class="hero">
             <div class="container">
@@ -366,6 +557,7 @@
     <!-- scripts -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
     <script>
         AOS.init({ duration: 800, once: true });
 
