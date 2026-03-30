@@ -1,5 +1,5 @@
 import { neon } from '@netlify/neon';
-import { blob } from '@netlify/blobs';
+import { blobs } from '@netlify/blobs';
 
 export default async (event) => {
   let body = event.body;
@@ -9,7 +9,7 @@ export default async (event) => {
   const { id, fmd_status, location, imageBase64 } = body;
 
   // Upload image to Netlify Blob
-  const { url: qr_blob_url } = await blob.upload(
+  const { url: qr_blob_url } = await blobs.upload(
     `qr-codes/${id}.png`,
     imageBase64,
     { contentType: 'image/png' }
