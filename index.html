@@ -28,7 +28,7 @@
         .btn-primary { background: var(--primary); color: white; border: 1px solid var(--primary); }
         .btn-outline { border: 1px solid var(--primary); color: var(--primary); background: transparent; }
 
-        /* HERO (unchanged) */
+        /* HERO */
         .hero { position: relative; padding: 100px 0 50px; background: linear-gradient(165deg, #ffffff 0%, #f0f5fa 100%); overflow: hidden; }
         .hero-grid { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
         @media (min-width: 900px) { .hero-grid { grid-template-columns: 1.1fr 1fr; } }
@@ -48,7 +48,7 @@
         #miniLivestockMap { width: 100%; height: 100%; z-index: 1; }
         .map-badge { position: absolute; bottom: 8px; left: 12px; background: rgba(0,0,0,0.6); color: white; font-size: 0.7rem; padding: 0.2rem 0.8rem; border-radius: 40px; backdrop-filter: blur(4px); z-index: 10; }
 
-        /* process grid, etc (unchanged) */
+        /* process grid */
         .section-header { text-align: center; margin: 3rem 0 2rem; }
         .section-tag { background: rgba(188,28,46,0.08); color: var(--primary-dark); padding: 0.3rem 1rem; border-radius: 60px; font-weight: 600; font-size: 0.8rem; display: inline-block; }
         .subsection-title { font-size: 1.8rem; font-weight: 700; margin: 0.8rem 0 1rem; }
@@ -83,7 +83,7 @@
             .nav-actions .btn span.hide-mobile { display: none; }
         }
 
-        /* ========== MOBILE DROPDOWN (hamburger) ========== */
+        /* MOBILE DROPDOWN */
         .nav-toggle {
             display: none;
             flex-direction: column;
@@ -126,7 +126,7 @@
                 pointer-events: none;
             }
             .nav-menu.active {
-                max-height: 300px;   /* enough for 3-4 items */
+                max-height: 300px;
                 padding: 1rem 0;
                 pointer-events: all;
                 border-bottom: 2px solid var(--primary);
@@ -157,7 +157,7 @@
         .hero-image-placeholder { width: 100%; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
         .hero-image-placeholder img { width: 100%; height: auto; display: block; }
 
-        /* camera modal (unchanged) */
+        /* camera modal */
         .camera-modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 2000;
@@ -187,8 +187,6 @@
         .trust-badge-list { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1.5rem; }
         .hide-mobile { display: inline; }
         @media (max-width: 600px) { .hide-mobile { display: none; } }
-
-        /* extra mobile polish */
         @media (max-width:480px){
             .btn-large { padding:0.7rem 1.2rem; }
             .hero-title { font-size: 2.2rem; }
@@ -206,20 +204,16 @@
                     <span class="logo-text" style="display:none;">🐄</span>
                     <span class="logo-text"><span class="logo-full">Livestock</span><span class="text-red logo-full">PulseSA</span><span class="logo-short">L<span class="text-red">P</span></span></span>
                 </a>
-
-                <!-- Hamburger toggle (mobile only) -->
                 <button class="nav-toggle" id="navToggle" aria-label="menu">
                     <span></span>
                     <span></span>
                     <span></span>
                 </button>
-
                 <ul class="nav-menu" id="navMenu">
                     <li><a href="index.html" class="nav-link">Vision</a></li>
                     <li><a href="process.html" class="nav-link">Process</a></li>
                     <li><a href="dashbaord.html" class="nav-link">Dashboard</a></li>
                 </ul>
-
                 <div class="nav-actions">
                     <button id="scanDemoBtn" class="btn btn-outline"><i class="fas fa-qrcode"></i> <span class="hide-mobile">Scan</span> demo</button>
                     <a href="#" class="btn btn-primary">Partner</a>
@@ -228,7 +222,7 @@
         </div>
     </header>
 
-    <!-- camera modal (unchanged) -->
+    <!-- camera modal -->
     <div id="cameraModal" class="camera-modal">
         <div class="camera-card">
             <div class="camera-header">
@@ -245,38 +239,28 @@
         </div>
     </div>
 
-    <!-- 
-  ...Your previous code remains unchanged before the script section
--->
-
-<!-- Add this QR + data form right after your camera modal, hidden by default -->
-<form id="animalForm" style="display:none; margin:2rem auto; max-width:400px; background:white; border-radius:24px; box-shadow:0 4px 18px #0001; padding: 2rem;">
-    <h3 style="margin-bottom: 1rem; color:#bc1c2e;"><i class="fas fa-qrcode"></i> Register Animal</h3>
-    <label>Animal ID (from QR):<br>
-        <input type="text" id="animalId" readonly style="width:100%;margin-bottom:8px;">
-    </label><br>
-    <label>FMD Status:<br>
-        <select id="fmdStatus" style="width:100%;margin-bottom:8px;">
-            <option value="Healthy">Healthy</option>
-            <option value="Suspect">Suspect</option>
-            <option value="Infected">Infected</option>
-        </select>
-    </label><br>
-    <label>Location:<br>
-        <input type="text" id="animalLocation" readonly style="width:100%;margin-bottom:8px;">
-    </label><br>
-    <label>QR Image Preview:<br>
-        <img id="qrImagePreview" style="max-width:180px; border-radius:12px; margin-bottom:10px;">
-    </label><br>
-    <button type="submit" class="btn btn-primary">Save Animal</button>
-</form>
-
-<!-- Add a hidden canvas for capturing QR image from video -->
-<canvas id="qrCaptureCanvas" style="display:none;"></canvas>
-
-<!-- ...your other HTML code unchanged... -->
-
-<!-- At the end, include jsQR, then your initialization script: -->
+    <!-- Animal Registration Form -->
+    <form id="animalForm" style="display:none; margin:2rem auto; max-width:400px; background:white; border-radius:24px; box-shadow:0 4px 18px #0001; padding: 2rem;">
+        <h3 style="margin-bottom: 1rem; color:#bc1c2e;"><i class="fas fa-qrcode"></i> Register Animal</h3>
+        <label>Animal ID (from QR):<br>
+            <input type="text" id="animalId" readonly style="width:100%;margin-bottom:8px;">
+        </label><br>
+        <label>FMD Status:<br>
+            <select id="fmdStatus" style="width:100%;margin-bottom:8px;">
+                <option value="Healthy">Healthy</option>
+                <option value="Suspect">Suspect</option>
+                <option value="Infected">Infected</option>
+            </select>
+        </label><br>
+        <label>Location:<br>
+            <input type="text" id="animalLocation" readonly style="width:100%;margin-bottom:8px;">
+        </label><br>
+        <label>QR Image Preview:<br>
+            <img id="qrImagePreview" style="max-width:180px; border-radius:12px; margin-bottom:10px;">
+        </label><br>
+        <button type="submit" class="btn btn-primary">Save Animal</button>
+    </form>
+    <canvas id="qrCaptureCanvas" style="display:none;"></canvas>
 
     <main>
         <section class="hero">
@@ -396,173 +380,16 @@
         </footer>
     </main>
 
-    <!-- scripts -->
+    <!-- scripts (all duplicates removed, consolidated) -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
-<script>
-AOS.init({ duration: 800, once: true });
-
-// ... keep your other map/menu code unchanged ...
-
-const modal = document.getElementById('cameraModal');
-const video = document.getElementById('cameraFeed');
-const placeholder = document.getElementById('cameraPlaceholder');
-const closeBtn = document.getElementById('closeCamera');
-const scanButtons = [document.getElementById('scanDemoBtn'), document.getElementById('heroScanBtn')];
-
-let stream = null;
-let qrScanInterval = null;
-
-// ========== QR SCANNER CORE ========== //
-
-function stopStream() {
-    if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-        stream = null;
-    }
-    if (qrScanInterval) {
-        clearInterval(qrScanInterval);
-        qrScanInterval = null;
-    }
-}
-
-function showCamera() {
-    modal.style.display = 'flex';
-    video.style.display = 'none';
-    placeholder.style.display = 'flex';
-
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-        .then(mediaStream => {
-            stream = mediaStream;
-            video.srcObject = stream;
-            video.onloadedmetadata = () => {
-                video.play().then(() => {
-                    placeholder.style.display = 'none';
-                    video.style.display = 'block';
-                    startQRScan();
-                }).catch(e => {
-                    placeholder.innerHTML = `<i class="fas fa-exclamation-triangle"></i> could not play video`;
-                });
-            };
-        })
-        .catch(err => {
-            placeholder.innerHTML = `
-                <i class="fas fa-exclamation-triangle" style="font-size:2.5rem;"></i>
-                <span>Camera access denied.</span>
-                <span style="font-size:0.8rem;">(simulated demo)</span>
-            `;
-        });
-}
-
-function hideCamera() {
-    modal.style.display = 'none';
-    stopStream();
-    placeholder.innerHTML = `
-        <i class="fas fa-camera" style="font-size: 4rem; opacity: 0.6;"></i>
-        <div class="mock-scan-line"></div>
-        <span>waiting for camera …</span>
-    `;
-    placeholder.style.display = 'flex';
-    video.style.display = 'none';
-}
-
-scanButtons.forEach(btn => {
-    if (btn) btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        showCamera();
-    });
-});
-if (closeBtn) closeBtn.addEventListener('click', hideCamera);
-modal.addEventListener('click', (e) => {
-    if (e.target === modal) hideCamera();
-});
-window.addEventListener('beforeunload', stopStream);
-
-
-// =========== QR SCAN LOOP ==============
-
-function startQRScan() {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    qrScanInterval = setInterval(() => {
-        if (!video.videoWidth) return; // Wait for video ready
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const code = jsQR(imgData.data, canvas.width, canvas.height);
-        if (code) {
-            // Got QR code!
-            onQRDetected(code.data);
-        }
-    }, 400); // Scan every 400ms
-}
-
-function onQRDetected(qrText) {
-    // Stop scanning, hide camera
-    hideCamera();
-
-    // Save a snapshot from the video feed
-    const canvas = document.getElementById('qrCaptureCanvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const imageBase64 = canvas.toDataURL('image/png');
-
-    // Fill in the animal form
-    document.getElementById('animalId').value = qrText;
-    document.getElementById('qrImagePreview').src = imageBase64;
-
-    // Get geolocation if possible, put in location field
-    if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(function(pos) {
-            document.getElementById('animalLocation').value =
-                pos.coords.latitude + "," + pos.coords.longitude;
-        }, function() {
-            document.getElementById('animalLocation').value = "";
-        });
-    }
-
-    // Show the form
-    document.getElementById('animalForm').style.display = 'block';
-}
-
-// =========== FORM SUBMIT ==============
-
-document.getElementById('animalForm').onsubmit = async function(e) {
-    e.preventDefault();
-    // Get values
-    const id = document.getElementById('animalId').value;
-    const fmd_status = document.getElementById('fmdStatus').value;
-    const location = document.getElementById('animalLocation').value;
-    const imageBase64 = document.getElementById('qrImagePreview').src;
-
-    // Send to Netlify Function endpoint (replace with your actual endpoint)
-    const res = await fetch('/.netlify/functions/save-animal', {
-        method: 'POST',
-        body: JSON.stringify({ id, fmd_status, location, imageBase64 }),
-        headers: { 'Content-Type': 'application/json' }
-    });
-
-    if (res.ok) {
-        alert('Animal registered!');
-        document.getElementById('animalForm').reset();
-        document.getElementById('animalForm').style.display = "none";
-        document.getElementById('qrImagePreview').src = "";
-        // Optionally refresh dashboard or do something else here
-    } else {
-        alert('Error saving animal!');
-    }
-};
-</script>
-
     <script>
-        AOS.init({ duration: 800, once: true });
+        (function() {
+            // Initialize AOS
+            AOS.init({ duration: 800, once: true });
 
-        // mini map 
-        document.addEventListener('DOMContentLoaded', function() {
+            // Mini Map
             const mapEl = document.getElementById('miniLivestockMap');
             if (mapEl) {
                 const map = L.map(mapEl, { center: [-28.4793, 24.6986], zoom: 5, zoomControl: false, attributionControl: false, scrollWheelZoom: false });
@@ -574,120 +401,162 @@ document.getElementById('animalForm').onsubmit = async function(e) {
                     }).addTo(map);
                 });
             }
-        });
 
-        // ========== MOBILE DROPDOWN TOGGLE ==========
-        const navToggle = document.getElementById('navToggle');
-        const navMenu = document.getElementById('navMenu');
-
-        if (navToggle && navMenu) {
-            navToggle.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const isActive = navMenu.classList.toggle('active');
-                this.classList.toggle('active', isActive);
-
-                // Optional: disable body scroll when menu open
-                document.body.style.overflow = isActive ? 'hidden' : '';
-            });
-
-            // Close menu when a link is clicked (good UX)
-            navMenu.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', () => {
-                    navMenu.classList.remove('active');
-                    navToggle.classList.remove('active');
-                    document.body.style.overflow = '';
+            // Mobile dropdown toggle
+            const navToggle = document.getElementById('navToggle');
+            const navMenu = document.getElementById('navMenu');
+            if (navToggle && navMenu) {
+                navToggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const isActive = navMenu.classList.toggle('active');
+                    this.classList.toggle('active', isActive);
+                    document.body.style.overflow = isActive ? 'hidden' : '';
                 });
-            });
-
-            // Close on click outside (optional)
-            document.addEventListener('click', (event) => {
-                if (!navToggle.contains(event.target) && !navMenu.contains(event.target) && navMenu.classList.contains('active')) {
-                    navMenu.classList.remove('active');
-                    navToggle.classList.remove('active');
-                    document.body.style.overflow = '';
-                }
-            });
-        }
-
-        // camera logic (unchanged)
-        const modal = document.getElementById('cameraModal');
-        const video = document.getElementById('cameraFeed');
-        const placeholder = document.getElementById('cameraPlaceholder');
-        const closeBtn = document.getElementById('closeCamera');
-        const scanButtons = [document.getElementById('scanDemoBtn'), document.getElementById('heroScanBtn')];
-
-        let stream = null;
-
-        function stopStream() {
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-                stream = null;
+                navMenu.querySelectorAll('.nav-link').forEach(link => {
+                    link.addEventListener('click', () => {
+                        navMenu.classList.remove('active');
+                        navToggle.classList.remove('active');
+                        document.body.style.overflow = '';
+                    });
+                });
+                document.addEventListener('click', (event) => {
+                    if (!navToggle.contains(event.target) && !navMenu.contains(event.target) && navMenu.classList.contains('active')) {
+                        navMenu.classList.remove('active');
+                        navToggle.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                });
             }
-        }
 
-        function showCamera() {
-            modal.style.display = 'flex';
-            video.style.display = 'none';
-            placeholder.style.display = 'flex';
+            // Camera & QR Scanner Logic (consolidated, no duplicates)
+            const modal = document.getElementById('cameraModal');
+            const video = document.getElementById('cameraFeed');
+            const placeholder = document.getElementById('cameraPlaceholder');
+            const closeBtn = document.getElementById('closeCamera');
+            const scanButtons = [document.getElementById('scanDemoBtn'), document.getElementById('heroScanBtn')];
+            let stream = null;
+            let qrScanInterval = null;
 
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-                .then(mediaStream => {
-                    stream = mediaStream;
-                    video.srcObject = stream;
-                    video.onloadedmetadata = () => {
-                        video.play().then(() => {
-                            placeholder.style.display = 'none';
-                            video.style.display = 'block';
-                        }).catch(e => {
-                            placeholder.innerHTML = `<i class="fas fa-exclamation-triangle"></i> could not play video`;
-                        });
-                    };
-                })
-                .catch(err => {
-                    placeholder.innerHTML = `
-                        <i class="fas fa-exclamation-triangle" style="font-size:2.5rem;"></i>
-                        <span>Camera access denied.</span>
-                        <span style="font-size:0.8rem;">(simulated demo)</span>
-                    `;
+            function stopStream() {
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
+                }
+                if (qrScanInterval) {
+                    clearInterval(qrScanInterval);
+                    qrScanInterval = null;
+                }
+            }
+
+            function startQRScan() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                qrScanInterval = setInterval(() => {
+                    if (!video.videoWidth) return;
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const code = jsQR(imgData.data, canvas.width, canvas.height);
+                    if (code) {
+                        onQRDetected(code.data);
+                    }
+                }, 400);
+            }
+
+            function onQRDetected(qrText) {
+                hideCamera();
+                const canvas = document.getElementById('qrCaptureCanvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imageBase64 = canvas.toDataURL('image/png');
+                document.getElementById('animalId').value = qrText;
+                document.getElementById('qrImagePreview').src = imageBase64;
+                if ("geolocation" in navigator) {
+                    navigator.geolocation.getCurrentPosition(function(pos) {
+                        document.getElementById('animalLocation').value = pos.coords.latitude + "," + pos.coords.longitude;
+                    }, function() {
+                        document.getElementById('animalLocation').value = "";
+                    });
+                }
+                document.getElementById('animalForm').style.display = 'block';
+            }
+
+            function showCamera() {
+                modal.style.display = 'flex';
+                video.style.display = 'none';
+                placeholder.style.display = 'flex';
+                navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+                    .then(mediaStream => {
+                        stream = mediaStream;
+                        video.srcObject = stream;
+                        video.onloadedmetadata = () => {
+                            video.play().then(() => {
+                                placeholder.style.display = 'none';
+                                video.style.display = 'block';
+                                startQRScan();
+                            }).catch(e => {
+                                placeholder.innerHTML = `<i class="fas fa-exclamation-triangle"></i> could not play video`;
+                            });
+                        };
+                    })
+                    .catch(err => {
+                        placeholder.innerHTML = `
+                            <i class="fas fa-exclamation-triangle" style="font-size:2.5rem;"></i>
+                            <span>Camera access denied.</span>
+                            <span style="font-size:0.8rem;">(simulated demo)</span>
+                        `;
+                    });
+            }
+
+            function hideCamera() {
+                modal.style.display = 'none';
+                stopStream();
+                placeholder.innerHTML = `
+                    <i class="fas fa-camera" style="font-size: 4rem; opacity: 0.6;"></i>
+                    <div class="mock-scan-line"></div>
+                    <span>waiting for camera …</span>
+                `;
+                placeholder.style.display = 'flex';
+                video.style.display = 'none';
+            }
+
+            scanButtons.forEach(btn => {
+                if (btn) btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showCamera();
                 });
-        }
-
-        function hideCamera() {
-            modal.style.display = 'none';
-            stopStream();
-            placeholder.innerHTML = `
-                <i class="fas fa-camera" style="font-size: 4rem; opacity: 0.6;"></i>
-                <div class="mock-scan-line"></div>
-                <span>waiting for camera …</span>
-            `;
-            placeholder.style.display = 'flex';
-            video.style.display = 'none';
-        }
-
-        scanButtons.forEach(btn => {
-            if (btn) btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                showCamera();
             });
-        });
-        if (closeBtn) closeBtn.addEventListener('click', hideCamera);
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) hideCamera();
-        });
-        window.addEventListener('beforeunload', stopStream);
+            if (closeBtn) closeBtn.addEventListener('click', hideCamera);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) hideCamera();
+            });
+            window.addEventListener('beforeunload', stopStream);
+
+            // Form submission
+            document.getElementById('animalForm').onsubmit = async function(e) {
+                e.preventDefault();
+                const id = document.getElementById('animalId').value;
+                const fmd_status = document.getElementById('fmdStatus').value;
+                const location = document.getElementById('animalLocation').value;
+                const imageBase64 = document.getElementById('qrImagePreview').src;
+                const res = await fetch('/.netlify/functions/save-animal', {
+                    method: 'POST',
+                    body: JSON.stringify({ id, fmd_status, location, imageBase64 }),
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (res.ok) {
+                    alert('Animal registered!');
+                    document.getElementById('animalForm').reset();
+                    document.getElementById('animalForm').style.display = "none";
+                    document.getElementById('qrImagePreview').src = "";
+                } else {
+                    alert('Error saving animal!');
+                }
+            };
+        })();
     </script>
-    <style>
-        /* extra mobile polish */
-        @media (max-width:480px){
-            .btn-large { padding:0.7rem 1.2rem; }
-            .hero-title { font-size: 2.2rem; }
-            .stat-banner { gap:0.8rem; padding:0.6rem 1rem; }
-            .stat-value { font-size:1.3rem; }
-        }
-        .hide-mobile { display: inline; }
-        @media (max-width:420px){
-            .hide-mobile { display: none; }
-        }
-    </style>
 </body>
 </html>
