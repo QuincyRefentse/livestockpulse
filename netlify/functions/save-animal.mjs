@@ -1,4 +1,83 @@
 import { neon } from '@netlify/neon';
+import { getStore } from '@netlify/blobs';
+
+export default async (event) => {
+  let body = event.body;
+  if (!body) {
+    return new Response(
+      JSON.stringify({ success: false, error: "Missing body!" }),
+      { status: 400, headers: { 'content-type': 'application/json' } }
+    );
+  }
+  if (typeof body === 'string') {
+    try {
+      body = JSON.parse(body);
+    } catch {
+      return new Response(
+        JSON.stringify({ success: false, error: "Invalid JSON body!" }),
+        { status: 400, headers: { 'content-type': 'application/json' } }
+      );
+    }
+  }
+  const { id, fmd_status, location, imageBase64 } = body;
+  if (!id || !fmd_status || !location || !imageBase64) {
+    return new Response(
+      JSON.stringify({ success: false, error: "Required field missing." }),
+      { status: 400, headers: { 'content-type': 'application/json' } }
+    );
+  }
+
+  // Clean base64 prefix if present
+  let pureBase64 = imageBase64;
+  if (pureBase64.startsWith('data:image/png;base64,')) {
+    pureBase64 = pureBase64.replace('data:image/png;base64,', '');
+  }
+
+  try {
+    // Initialize the blob store
+    const store = getStore('qr-codes');
+    
+    // Convert base64 to buffer and upload to Netlify Blob
+    const imageBuffer = Buffer.from(pureBase64, 'base64');
+    await store.set(`${id}.png`, imageBuffer, {
+      metadata: { contentType: 'image/png' }
+    });
+    
+    // Get the blob URL (you'll need to construct this based on your site)
+    const qr_blob_url = `/.netlify/blobs/qr-codes/${id}.png`;
+
+    // Use Neon to insert!
+    const sql = neon();
+    const scan_time = new Date().toISOString();
+    const [animal] = await sql`
+      INSERT INTO animals (id, qr_blob_url, fmd_status, location, scan_time)
+      VALUES (${id}, ${qr_blob_url}, ${fmd_status}, ${location}, ${scan_time})
+      RETURNING *;
+    `;
+
+    return new Response(
+      JSON.stringify({ success: true, animal }),
+      { status: 201, headers: { 'content-type': 'application/json' } }
+    );
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ success: false, error: error.message }),
+      { status: 500, headers: { 'content-type': 'application/json' } }
+    );
+  }
+};
+
+
+
+
+
+
+
+
+/*
+
+
+import { neon } from '@netlify/neon';
 //import { blobs } from '@netlify/blobs';
 import blobs from '@netlify/blobs';
 
@@ -64,6 +143,9 @@ export default async (event) => {
 };
 
 
+
+
+*/
 
 /*
 
