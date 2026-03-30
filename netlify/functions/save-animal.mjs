@@ -1,5 +1,6 @@
 import { neon } from '@netlify/neon';
-import { blobs } from '@netlify/blobs';
+//import { blobs } from '@netlify/blobs';
+import blobs from '@netlify/blobs';
 
 export default async (event) => {
   let body = event.body;
