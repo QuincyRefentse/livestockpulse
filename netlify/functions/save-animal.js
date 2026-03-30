@@ -1,3 +1,46 @@
+import { neon } from '@netlify/neon';
+import { blob } from '@netlify/blobs';
+
+export default async (event) => {
+  let body = event.body;
+  if (typeof body === 'string') {
+    body = JSON.parse(body);
+  }
+  const { id, fmd_status, location, imageBase64 } = body;
+
+  // Upload image to Netlify Blob
+  const { url: qr_blob_url } = await blob.upload(
+    `qr-codes/${id}.png`,
+    imageBase64,
+    { contentType: 'image/png' }
+  );
+
+  // Use Netlify/Neon package for DB
+  const sql = neon(); // It will use process.env.NETLIFY_DATABASE_URL automatically
+  try {
+    const scan_time = new Date().toISOString();
+    // Insert the record
+    const [animal] = await sql`
+      INSERT INTO animals (id, qr_blob_url, fmd_status, location, scan_time)
+      VALUES (${id}, ${qr_blob_url}, ${fmd_status}, ${location}, ${scan_time})
+      RETURNING *;
+    `;
+
+    return {
+      statusCode: 201,
+      body: JSON.stringify({ success: true, animal }),
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ success: false, error: error.message }),
+    };
+  }
+};
+
+
+
+/*
 import { Client } from "pg";
 import { blob } from '@netlify/blobs';
 
@@ -44,7 +87,7 @@ export default async (event) => {
   }
 };
 
-
+*/
 
 
 /*
