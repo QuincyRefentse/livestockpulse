@@ -2,6 +2,142 @@ import { neon } from '@netlify/neon';
 import { getStore } from '@netlify/blobs';
 
 export default async (event) => {
+  // Log the incoming request details for debugging
+  console.log('Request method:', event.httpMethod);
+  console.log('Request headers:', JSON.stringify(event.headers));
+  console.log('Request body type:', typeof event.body);
+  
+  let body = event.body;
+  
+  // Handle different ways the body might be passed
+  if (!body) {
+    console.error('No body in request');
+    return new Response(
+      JSON.stringify({ success: false, error: "Missing body!" }),
+      { status: 400, headers: { 'content-type': 'application/json' } }
+    );
+  }
+  
+  // Parse body if it's a string
+  if (typeof body === 'string') {
+    try {
+      body = JSON.parse(body);
+      console.log('Parsed body:', JSON.stringify(body, null, 2));
+    } catch (parseError) {
+      console.error('JSON parse error:', parseError);
+      console.error('Raw body:', body);
+      return new Response(
+        JSON.stringify({ success: false, error: "Invalid JSON body!", details: parseError.message }),
+        { status: 400, headers: { 'content-type': 'application/json' } }
+      );
+    }
+  }
+  
+  // Check for required fields
+  const { id, fmd_status, location, imageBase64 } = body;
+  console.log('Extracted fields:', { id, fmd_status, location, hasImage: !!imageBase64 });
+  
+  const missingFields = [];
+  if (!id) missingFields.push('id');
+  if (!fmd_status) missingFields.push('fmd_status');
+  if (!location) missingFields.push('location');
+  if (!imageBase64) missingFields.push('imageBase64');
+  
+  if (missingFields.length > 0) {
+    console.error('Missing fields:', missingFields);
+    return new Response(
+      JSON.stringify({ 
+        success: false, 
+        error: "Required field missing.", 
+        missing: missingFields 
+      }),
+      { status: 400, headers: { 'content-type': 'application/json' } }
+    );
+  }
+
+  // Clean base64 prefix if present
+  let pureBase64 = imageBase64;
+  if (pureBase64.startsWith('data:image/png;base64,')) {
+    pureBase64 = pureBase64.replace('data:image/png;base64,', '');
+    console.log('Removed base64 prefix, new length:', pureBase64.length);
+  } else if (pureBase64.startsWith('data:image/jpeg;base64,')) {
+    pureBase64 = pureBase64.replace('data:image/jpeg;base64,', '');
+    console.log('Removed JPEG base64 prefix');
+  }
+
+  try {
+    // Initialize the blob store
+    console.log('Initializing blob store...');
+    const store = getStore('qr-codes');
+    
+    // Convert base64 to buffer
+    console.log('Converting base64 to buffer...');
+    const imageBuffer = Buffer.from(pureBase64, 'base64');
+    console.log('Buffer size:', imageBuffer.length, 'bytes');
+    
+    // Upload to blob store
+    console.log(`Uploading to blob store: ${id}.png`);
+    await store.set(`${id}.png`, imageBuffer, {
+      metadata: { contentType: 'image/png' }
+    });
+    console.log('Upload successful');
+    
+    // Construct blob URL
+    const qr_blob_url = `/.netlify/blobs/qr-codes/${id}.png`;
+    console.log('Blob URL:', qr_blob_url);
+
+    // Use Neon to insert
+    console.log('Connecting to Neon database...');
+    const sql = neon();
+    const scan_time = new Date().toISOString();
+    console.log('Inserting into database:', { id, qr_blob_url, fmd_status, location, scan_time });
+    
+    const [animal] = await sql`
+      INSERT INTO animals (id, qr_blob_url, fmd_status, location, scan_time)
+      VALUES (${id}, ${qr_blob_url}, ${fmd_status}, ${location}, ${scan_time})
+      RETURNING *;
+    `;
+    
+    console.log('Database insert successful:', animal);
+
+    return new Response(
+      JSON.stringify({ success: true, animal }),
+      { status: 201, headers: { 'content-type': 'application/json' } }
+    );
+  } catch (error) {
+    console.error('Detailed error:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
+    
+    return new Response(
+      JSON.stringify({ 
+        success: false, 
+        error: error.message,
+        details: error.stack
+      }),
+      { status: 500, headers: { 'content-type': 'application/json' } }
+    );
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+import { neon } from '@netlify/neon';
+import { getStore } from '@netlify/blobs';
+
+export default async (event) => {
   let body = event.body;
   if (!body) {
     return new Response(
@@ -67,7 +203,7 @@ export default async (event) => {
   }
 };
 
-
+*/
 
 
 
