@@ -245,7 +245,7 @@
     <form id="animalForm" style="display:none; margin:2rem auto; max-width:400px; background:white; border-radius:24px; box-shadow:0 4px 18px #0001; padding: 2rem;">
         <h3 style="margin-bottom: 1rem; color:#bc1c2e;"><i class="fas fa-qrcode"></i> Register Animal</h3>
         <label>Animal ID (from QR):<br>
-            <input type="text" id="animalId" readonly style="width:100%;margin-bottom:8px;">
+            <input type="text" id="animalId" required style="width:100%;margin-bottom:8px;">
         </label><br>
         <label>FMD Status:<br>
             <select id="fmdStatus" style="width:100%;margin-bottom:8px;">
@@ -255,13 +255,15 @@
             </select>
         </label><br>
         <label>Location:<br>
-            <input type="text" id="animalLocation" readonly style="width:100%;margin-bottom:8px;">
+            <input type="text" id="animalLocation" required style="width:100%;margin-bottom:8px;">
         </label><br>
         <label>QR Image Preview:<br>
             <img id="qrImagePreview" style="max-width:180px; border-radius:12px; margin-bottom:10px;">
         </label><br>
         <button type="submit" class="btn btn-primary">Save Animal</button>
     </form>
+
+
     <canvas id="qrCaptureCanvas" style="display:none;"></canvas>
 
     <main>
