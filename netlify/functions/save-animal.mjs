@@ -1,6 +1,163 @@
 import { neon } from '@netlify/neon';
 import { getStore } from '@netlify/blobs';
 
+// Changed 'event' to 'req' to match modern Web Request standards
+export default async (req) => { 
+  // Add CORS headers
+  const headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS'
+  };
+  
+  // Handle preflight OPTIONS request
+  if (req.method === 'OPTIONS' || req.httpMethod === 'OPTIONS') {
+    return new Response(null, {
+      status: 204,
+      headers
+    });
+  }
+  
+  console.log('=== Function called ===');
+  console.log('Method:', req.method);
+  
+  let body;
+  try {
+    // ✨ THE MAGIC FIX: Correctly read JSON in modern Netlify Functions
+    body = await req.json(); 
+  } catch (error) {
+    // Fallback just in case it triggers the older stringified body format
+    try {
+      body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    } catch (e) {
+      console.error('JSON parse error:', e);
+      return new Response(
+        JSON.stringify({ success: false, error: "Invalid JSON body!" }),
+        { status: 400, headers }
+      );
+    }
+  }
+
+  if (!body) {
+    console.error('No body in request');
+    return new Response(
+      JSON.stringify({ success: false, error: "Missing body!" }),
+      { status: 400, headers }
+    );
+  }
+  
+  // Check for required fields
+  const { id, fmd_status, location, imageBase64 } = body;
+  
+  if (!id || !fmd_status || !location || !imageBase64) {
+    console.error('Missing fields:', { 
+      hasId: !!id, 
+      hasFmd: !!fmd_status, 
+      hasLocation: !!location, 
+      hasImage: !!imageBase64 
+    });
+    return new Response(
+      JSON.stringify({ 
+        success: false, 
+        error: "Required field missing.",
+        missing: [
+          !id && 'id',
+          !fmd_status && 'fmd_status',
+          !location && 'location',
+          !imageBase64 && 'imageBase64'
+        ].filter(Boolean)
+      }),
+      { status: 400, headers }
+    );
+  }
+  
+  console.log('Processing animal:', { id, fmd_status, location });
+  
+  // Clean base64 prefix if present
+  let pureBase64 = imageBase64;
+  if (pureBase64.startsWith('data:image/png;base64,')) {
+    pureBase64 = pureBase64.replace('data:image/png;base64,', '');
+    console.log('Removed PNG prefix');
+  } else if (pureBase64.startsWith('data:image/jpeg;base64,')) {
+    pureBase64 = pureBase64.replace('data:image/jpeg;base64,', '');
+    console.log('Removed JPEG prefix');
+  }
+  
+  try {
+    // Initialize the blob store
+    console.log('Initializing blob store...');
+    const store = getStore('qr-codes');
+    
+    // Convert base64 to buffer
+    const imageBuffer = Buffer.from(pureBase64, 'base64');
+    console.log('Image buffer size:', imageBuffer.length, 'bytes');
+    
+    // Upload to blob store
+    const blobKey = `${id}.png`;
+    console.log('Uploading to blob:', blobKey);
+    await store.set(blobKey, imageBuffer, {
+      metadata: { contentType: 'image/png' }
+    });
+    console.log('Upload successful');
+    
+    // Construct blob URL
+    const qr_blob_url = `/.netlify/blobs/qr-codes/${blobKey}`;
+    
+    // Use Neon to insert into database
+    console.log('Connecting to Neon database...');
+    const sql = neon();
+    const scan_time = new Date().toISOString();
+    
+    console.log('Inserting record...');
+    const [animal] = await sql`
+      INSERT INTO animals (id, qr_blob_url, fmd_status, location, scan_time)
+      VALUES (${id}, ${qr_blob_url}, ${fmd_status}, ${location}, ${scan_time})
+      RETURNING *;
+    `;
+    
+    console.log('Database insert successful:', animal.id);
+    
+    return new Response(
+      JSON.stringify({ success: true, animal }),
+      { status: 201, headers }
+    );
+  } catch (error) {
+    console.error('Detailed error:', {
+      message: error.message,
+      stack: error.stack,
+      name: error.name
+    });
+    
+    return new Response(
+      JSON.stringify({ 
+        success: false, 
+        error: error.message,
+        details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      }),
+      { status: 500, headers }
+    );
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+
+import { neon } from '@netlify/neon';
+import { getStore } from '@netlify/blobs';
+
 export default async (event) => {
   // Add CORS headers
   const headers = {
@@ -138,7 +295,7 @@ export default async (event) => {
   }
 };
 
-
+*/
 
 /*
 import { neon } from '@netlify/neon';

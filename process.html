@@ -369,6 +369,15 @@
             </div>
             <a href="#" class="btn btn-primary btn-large" style="margin-top:1rem;"><i class="fas fa-file-pdf"></i> download technical brief</a>
         </div>
+        
+       <form id="userForm">
+  <input type="text" name="firstname" placeholder="First Name" >
+  <input type="text" name="surname" placeholder="Surname" >
+  <input type="number" name="age" placeholder="Age" >
+  <button type="submit">Submit</button>
+</form>
+<div id="result"></div>
+<script src="js/form.js"></script>
 
         <!-- contact card -->
         <div class="container" style="background: white; border-radius: 48px; padding: 3rem; box-shadow: 0 20px 30px -20px #00000030; margin-bottom: 4rem;">
@@ -545,13 +554,6 @@
         if (modal) modal.addEventListener('click', (e) => { if(e.target === modal) hideCamera(); });
         window.addEventListener('beforeunload', stopStream);
     </script>
-    <form id="userForm">
-  <label>First Name: <input type="text" name="firstname" required></label><br>
-  <label>Surname: <input type="text" name="surname" required></label><br>
-  <label>Age: <input type="number" name="age" required></label><br>
-  <button type="submit">Submit</button>
-</form>
-<div id="result"></div>
-<script src="js/form.js"></script>
+   
 </body>
 </html>
