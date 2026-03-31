@@ -1922,3 +1922,34 @@ section {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+form {
+  width: 300px;
+  margin: 30px auto;
+  padding: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+label {
+  display: block;
+  margin-bottom: 12px;
+}
+input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+button {
+  width: 100%;
+  padding: 10px;
+  background: #1fb6ff;
+  border: none;
+  color: white;
+  border-radius: 4px;
+}
+#result {
+  margin: 10px auto;
+  width: 300px;
+  text-align: center;
+  color: green;
+}

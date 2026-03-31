@@ -545,5 +545,13 @@
         if (modal) modal.addEventListener('click', (e) => { if(e.target === modal) hideCamera(); });
         window.addEventListener('beforeunload', stopStream);
     </script>
+    <form id="userForm">
+  <label>First Name: <input type="text" name="firstname" required></label><br>
+  <label>Surname: <input type="text" name="surname" required></label><br>
+  <label>Age: <input type="number" name="age" required></label><br>
+  <button type="submit">Submit</button>
+</form>
+<div id="result"></div>
+<script src="js/form.js"></script>
 </body>
 </html>
