@@ -1,10 +1,11 @@
 [build]
-  command = "npm run build"
+  # Left empty because Vanilla JS doesn't need to be built/compiled
+  command = ""
   publish = "."
   functions = "netlify/functions"
 
 [functions]
-  # Enable blobs for all functions
+  # Enable blobs for your specific function
   [functions."save-animal"]
     blobs = true
 
