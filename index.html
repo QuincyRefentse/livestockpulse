@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>National QR Livestock · mobile ready</title>
-    <!-- Fonts, Icons, AOS, Leaflet -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
@@ -212,19 +211,18 @@
                 <ul class="nav-menu" id="navMenu">
                     <li><a href="index.html" class="nav-link">Vision</a></li>
                     <li><a href="process.html" class="nav-link">Process</a></li>
-                    <li><a href="dashbaord.html" class="nav-link">Dashboard</a></li>
+                    <li><a href="dashboard.html" class="nav-link">Dashboard</a></li>
                 </ul>
                 <div class="nav-actions">
                     <button id="scanDemoBtn" class="btn btn-outline"><i class="fas fa-qrcode"></i> <span class="hide-mobile">Scan</span> demo</button>
                     <a href="#" class="btn btn-primary">Partner</a>
                 </div>
 
-                <button onclick="location.href='process.html'">Enter User Details</button>
+                <button class="btn btn-outline" onclick="location.href='process.html'">Enter User Details</button>
             </nav>
         </div>
     </header>
 
-    <!-- camera modal -->
     <div id="cameraModal" class="camera-modal">
         <div class="camera-card">
             <div class="camera-header">
@@ -241,7 +239,6 @@
         </div>
     </div>
 
-    <!-- Animal Registration Form -->
     <form id="animalForm" style="display:none; margin:2rem auto; max-width:400px; background:white; border-radius:24px; box-shadow:0 4px 18px #0001; padding: 2rem;">
         <h3 style="margin-bottom: 1rem; color:#bc1c2e;"><i class="fas fa-qrcode"></i> Register Animal</h3>
         <label>Animal ID (from QR):<br>
@@ -262,7 +259,6 @@
         </label><br>
         <button type="submit" class="btn btn-primary">Save Animal</button>
     </form>
-
 
     <canvas id="qrCaptureCanvas" style="display:none;"></canvas>
 
@@ -384,7 +380,6 @@
         </footer>
     </main>
 
-    <!-- scripts (all duplicates removed, consolidated) -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
@@ -432,7 +427,7 @@
                 });
             }
 
-            // Camera & QR Scanner Logic (consolidated, no duplicates)
+            // Camera & QR Scanner Logic
             const modal = document.getElementById('cameraModal');
             const video = document.getElementById('cameraFeed');
             const placeholder = document.getElementById('cameraPlaceholder');
@@ -546,18 +541,27 @@
                 const fmd_status = document.getElementById('fmdStatus').value;
                 const location = document.getElementById('animalLocation').value;
                 const imageBase64 = document.getElementById('qrImagePreview').src;
-                const res = await fetch('/.netlify/functions/save-animal', {
-                    method: 'POST',
-                    body: JSON.stringify({ id, fmd_status, location, imageBase64 }),
-                    headers: { 'Content-Type': 'application/json' }
-                });
-                if (res.ok) {
-                    alert('Animal registered!');
-                    document.getElementById('animalForm').reset();
-                    document.getElementById('animalForm').style.display = "none";
-                    document.getElementById('qrImagePreview').src = "";
-                } else {
-                    alert('Error saving animal!');
+                
+                try {
+                    const res = await fetch('/.netlify/functions/save-animal', {
+                        method: 'POST',
+                        body: JSON.stringify({ id, fmd_status, location, imageBase64 }),
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    
+                    if (res.ok) {
+                        alert('Animal registered!');
+                        document.getElementById('animalForm').reset();
+                        document.getElementById('animalForm').style.display = "none";
+                        document.getElementById('qrImagePreview').src = "";
+                    } else {
+                        const errorData = await res.json();
+                        console.error('Backend rejected the save:', errorData);
+                        alert(`Error saving animal: ${errorData.error || 'Unknown Error'}`);
+                    }
+                } catch (networkError) {
+                    console.error('Network request failed entirely:', networkError);
+                    alert('Network error: Could not reach the server.');
                 }
             };
         })();
